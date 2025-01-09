@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { AccountRole } from '../account/account-role.enum';
 import { Account } from '../account/account.model';
 import {
   decodeAuthToken,
@@ -56,7 +57,7 @@ export async function verifyAndDecodeFirestoreToken(authToken: string) {
     if (!decodedToken) return undefined;
     const { idToken, roles, accountId } = decodedToken;
     await admin.auth().verifyIdToken(idToken);
-    return { idToken, accountId, roles: roles.split(',') };
+    return { idToken, accountId, roles: roles.split(',') as AccountRole[] };
   } catch (error) {
     console.error('Invalid firestore token: ', error);
     return undefined;

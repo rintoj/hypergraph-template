@@ -7,6 +7,7 @@ type Account {
   email: String
   id: ID
   name: String
+  photoURL: String
   roles: [AccountRole!]!
   updatedAt: DateTime
 }
@@ -16,10 +17,33 @@ enum AccountRole {
   User
 }
 
+input CreateAccountInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type LoginResponse {
+  account: Account!
+  id: ID!
+  token: String!
+}
+
+input LoginWithEmailInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  createAccount(input: CreateAccountInput!): Account!
+  loginWithEmail(input: LoginWithEmailInput!): LoginResponse!
+  logout: Boolean!
+}
 
 type Query {
   me: Account

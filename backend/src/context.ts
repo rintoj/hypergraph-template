@@ -21,11 +21,13 @@ function parseToken(req: Request) {
   if (token) return token;
 
   // read from cookie
-  const cookies: any = parse(req?.headers?.cookie);
+  const cookies: any = req?.headers?.cookie
+    ? parse(req?.headers?.cookie)
+    : undefined;
   return cookies?.token;
 }
 
-export async function createContext(decodeToken?: TokenDecoder) {
+export function createContext(decodeToken: TokenDecoder | undefined) {
   return async ({
     req: request,
     res: response,

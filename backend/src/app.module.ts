@@ -5,8 +5,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AuthGuardProvider } from './auth/auth.guard';
+import { AuthModule } from './auth/auth.module';
 import { createContext } from './context';
-import { GithubModule } from './github/github.module';
+import { verifyAndDecodeFirestoreToken } from './firebase/firebase-auth';
 import { FirestoreProviderModule } from './firebase/firebase.module';
 
 @Module({
@@ -18,8 +19,8 @@ import { FirestoreProviderModule } from './firebase/firebase.module';
         process.env.NODE_ENV !== 'production' ? './schema.gql' : true,
       introspection: true,
       sortSchema: true,
-      installSubscriptionHandlers: true,
-      context: createContext(),
+      installSubscriptionHandlers: false,
+      context: createContext(verifyAndDecodeFirestoreToken),
       path: '/',
     }),
     ConfigModule.forRoot({
@@ -28,7 +29,7 @@ import { FirestoreProviderModule } from './firebase/firebase.module';
     }),
     FirestoreProviderModule,
     AccountModule,
-    GithubModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AuthGuardProvider],
