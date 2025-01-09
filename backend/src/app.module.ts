@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AuthGuardProvider } from './auth/auth.guard';
 import { createContext } from './context';
 import { GithubModule } from './github/github.module';
+import { FirestoreProviderModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { GithubModule } from './github/github.module';
       envFilePath:
         process.env.NODE_ENV !== 'production' ? '.env.local' : '.env',
     }),
+    FirestoreProviderModule,
     AccountModule,
     GithubModule,
   ],
