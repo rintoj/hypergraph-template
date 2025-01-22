@@ -2,11 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-enum UserRole {
-  Admin
-  User
-}
-
 input CreateUserInput {
   email: String!
   name: String!
@@ -19,9 +14,9 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type LoginResponse {
-  user: User!
   id: ID!
   token: String!
+  user: User!
 }
 
 input LoginWithEmailInput {
@@ -48,4 +43,9 @@ type User {
   photoURL: String
   roles: [UserRole!]!
   updatedAt: DateTime
+}
+
+enum UserRole {
+  Admin
+  User
 }
