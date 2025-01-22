@@ -2,18 +2,21 @@ import { generateIdOf } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { config } from '../../config';
+import { expirationToSeconds } from '../auth.utils';
 import { AuthMetadata } from './basic-auth.model';
 
 const saltRounds = 10;
 
 @Injectable()
 export class BasicAuthService {
+  jwtService: any;
   constructor(
     @InjectRepo(AuthMetadata)
     private readonly basicAuthRepository: Repository<AuthMetadata>,
   ) {}
 
-  private async hashPassword(password: string): Promise<string> {
+  private async generateHash(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(saltRounds);
     return await bcrypt.hash(password, salt);
   }
@@ -36,20 +39,70 @@ export class BasicAuthService {
     );
   }
 
-  async validateUser(username: string, password: string): Promise<boolean> {
+  generateTokens(payload: any) {
+    const accessToken = this.jwtService.sign(payload, {
+      secret: config.JWT_SECRET,
+      expiresIn: config.JWT_EXPIRY,
+    });
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: config.JWT_REFRESH_SECRET,
+      expiresIn: config.JWT_REFRESH_EXPIRY,
+    });
+    return { accessToken, refreshToken };
+  }
+
+  attachTokensToResponse(
+    response: any,
+    accessToken: string,
+    refreshToken: string,
+  ) {
+    response.header('Authentication', accessToken);
+    response.cookie('Authentication', accessToken, {
+      httpOnly: true,
+      secure: config.isProd,
+      expires: new Date(Date.now() + expirationToSeconds(config.JWT_EXPIRY)),
+    });
+    response.header('Refresh', refreshToken);
+    response.cookie('Refresh', refreshToken, {
+      httpOnly: true,
+      secure: config.isProd,
+      expires: new Date(
+        Date.now() + expirationToSeconds(config.JWT_REFRESH_EXPIRY),
+      ),
+    });
+  }
+
+  async verifyWithUsername(
+    username: string,
+    password: string,
+  ): Promise<AuthMetadata | undefined> {
     const user = await this.basicAuthRepository.findOne((q) =>
       q.whereEqualTo('username', username),
     );
-    if (!user?.passwordHash) return false;
-    return this.comparePassword(password, user.passwordHash);
+    if (!user?.passwordHash) return;
+    if (!this.comparePassword(password, user.passwordHash)) return;
+    return user;
   }
 
-  async saveSigninData(username: string) {
+  async verifyWithRefreshToken(
+    username: string,
+    refreshToken: string,
+  ): Promise<AuthMetadata | undefined> {
+    const user = await this.basicAuthRepository.findOne((q) =>
+      q.whereEqualTo('username', username),
+    );
+    if (!user?.passwordHash) return;
+    if (!this.comparePassword(refreshToken, user.refreshTokenHash)) return;
+    return user;
+  }
+
+  async saveSigninData(username: string, refreshToken: string) {
     const id = generateIdOf(username);
     return this.basicAuthRepository.update({
       id,
       username,
       lastSigninAt: new Date(),
+      refreshTokenHash: await this.generateHash(refreshToken),
     });
   }
 
@@ -58,7 +111,7 @@ export class BasicAuthService {
     password: string,
     lastSigninAt?: Date,
   ) {
-    const passwordHash = await this.hashPassword(password);
+    const passwordHash = await this.generateHash(password);
     const id = generateIdOf(username);
     return this.basicAuthRepository.save({
       id,

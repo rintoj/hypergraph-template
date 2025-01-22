@@ -1,10 +1,7 @@
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthMetadata } from './basic-auth.model';
-import {
-  BasicAuthSignInGuard,
-  BasicAuthSignUpGuard,
-} from './basic-auth.strategy';
+import { BasicAuthSignInGuard, BasicAuthSignUpGuard } from './basic-auth.guard';
 
 @Resolver()
 export class BasicAuthResolver {

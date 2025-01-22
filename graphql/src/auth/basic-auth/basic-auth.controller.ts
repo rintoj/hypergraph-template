@@ -1,8 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import {
-  BasicAuthSignInGuard,
-  BasicAuthSignUpGuard,
-} from './basic-auth.strategy';
+import { BasicAuthSignInGuard, BasicAuthSignUpGuard } from './basic-auth.guard';
 
 @Controller('/auth')
 export class BasicAuthController {

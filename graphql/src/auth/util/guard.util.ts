@@ -10,9 +10,16 @@ export function getInputFromContext(context: ExecutionContext) {
     : context.getArgByIndex(0)?.body;
 }
 
-export function getRequestContext(context: ExecutionContext) {
+export function getContextFromExecutionCtx(context: ExecutionContext) {
   if (isGraphQLRequest(context)) {
     return context.getArgByIndex(2);
   }
   return context.getArgByIndex(1)?.req;
+}
+
+export function getResponseFromContext(context: ExecutionContext) {
+  if (isGraphQLRequest(context)) {
+    return context.getArgByIndex(3).res;
+  }
+  return context.getArgByIndex(1)?.res;
 }

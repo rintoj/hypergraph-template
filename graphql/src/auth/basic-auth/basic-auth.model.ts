@@ -23,7 +23,10 @@ export class AuthMetadata {
   providerType!: string;
 
   @Column({ nullable: true })
-  lastSigninAt: Date;
+  lastSigninAt?: Date;
+
+  @Column({ nullable: true })
+  refreshTokenHash?: string;
 
   @Column()
   createdAt: Date;
