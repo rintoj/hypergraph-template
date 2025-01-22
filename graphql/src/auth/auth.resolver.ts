@@ -8,7 +8,7 @@ import {
 } from '../firebase/firebase-auth';
 import { User, UserRole, UserStatus } from '../user/user.model';
 import { UserService } from '../user/user.service';
-import { CreateAccountInput, LoginWithEmailInput } from './auth.input';
+import { CreateUserInput, LoginWithEmailInput } from './auth.input';
 import { LoginResponse } from './auth.response';
 import { expirationToSeconds } from './auth.utils';
 
@@ -21,16 +21,16 @@ export class AuthResolver {
     @Context()
     context: RequestContext,
   ): Promise<User> {
-    return this.userService.findById(context.accountId);
+    return this.userService.findById(context.userId);
   }
 
   @Mutation(() => User)
-  async createAccount(
-    @Args({ name: 'input', type: () => CreateAccountInput })
-    input: CreateAccountInput,
+  async createUser(
+    @Args({ name: 'input', type: () => CreateUserInput })
+    input: CreateUserInput,
   ): Promise<User> {
-    const accountByEmail = await this.userService.findByEmail(input.email);
-    if (accountByEmail) {
+    const userByEmail = await this.userService.findByEmail(input.email);
+    if (userByEmail) {
       throw new BadRequestException(
         `An user with the email address (${input.email}) already exists. Please use a different email address.`,
       );
@@ -59,21 +59,20 @@ export class AuthResolver {
     @Context()
     context: RequestContext,
   ): Promise<LoginResponse> {
-    const account = await this.userService.findByEmail(input.email);
-    if (!account) {
+    const user = await this.userService.findByEmail(input.email);
+    if (!user) {
       throw new Error(
-        `An account with this email (${input.email}) does not exist`,
+        `An user with this email (${input.email}) does not exist`,
       );
     }
-
-    const user = await verifyFirestoreUserWithEmail(
+    const authUser = await verifyFirestoreUserWithEmail(
       input.email,
       input.password,
     );
-    if (!user || user.error) {
+    if (!authUser || authUser.error) {
       throw new Error('Invalid email or password');
     }
-    const token = await createFirestoreToken(user.idToken, account);
+    const token = await createFirestoreToken(authUser.idToken, user);
     context.response.cookie('token', token, {
       httpOnly: true,
       maxAge: expirationToSeconds(process.env.TOKEN_EXPIRY) * 1000,
@@ -81,8 +80,8 @@ export class AuthResolver {
       secure: true,
     });
     return {
-      id: account.id,
-      account: account,
+      id: authUser.id,
+      user: authUser,
       token,
     };
   }

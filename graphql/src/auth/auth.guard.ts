@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
     );
     if (!roles) return true;
     const context: RequestContext = executionContext.getArgByIndex(2);
-    if (!context.accountId || !context.roles) {
+    if (!context.userId || !context.roles) {
       return false;
     }
     if (!roles.length) return context.roles.includes(UserRole.User);

@@ -11,7 +11,7 @@ export async function verifyFirestoreUserWithEmail(
   password: string,
 ) {
   const firebaseApiKey = process.env.FIREBASE_API_KEY;
-  const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseApiKey}`;
+  const url = `https://identitytoolkit.googleapis.com/v1/users:signInWithPassword?key=${firebaseApiKey}`;
   const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify({
@@ -34,13 +34,13 @@ export async function createFirestoreUser(
 
 export async function createFirestoreToken(
   idToken: string,
-  account: Pick<User, 'id' | 'roles'>,
+  user: Pick<User, 'id' | 'roles'>,
 ) {
   return await encodeAuthToken({
     authToken: {
       idToken,
-      accountId: account.id as string,
-      roles: account.roles.join(', '),
+      userId: user.id as string,
+      roles: user.roles.join(', '),
     },
     secret: process.env.TOKEN_SECRET,
     maxAgeInSeconds: expirationToSeconds(process.env.TOKEN_EXPIRY ?? ''),
@@ -54,9 +54,9 @@ export async function verifyAndDecodeFirestoreToken(authToken: string) {
       secret: process.env.TOKEN_SECRET,
     });
     if (!decodedToken) return undefined;
-    const { idToken, roles, accountId } = decodedToken;
+    const { idToken, roles, userId } = decodedToken;
     await admin.auth().verifyIdToken(idToken);
-    return { idToken, accountId, roles: roles.split(',') as UserRole[] };
+    return { idToken, userId, roles: roles.split(',') as UserRole[] };
   } catch (error) {
     console.error('Invalid firestore token: ', error);
     return undefined;

@@ -7,7 +7,7 @@ export class LoginResponse {
   id!: string;
 
   @Field(() => User)
-  account!: User;
+  user!: User;
 
   @Field()
   token!: string;
