@@ -20,7 +20,7 @@ function getInput(context: ExecutionContext) {
 }
 
 @Injectable()
-export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
+export class BasicAuthSignInGuard extends AuthGuard('basic-auth') {
   constructor(private readonly basicAuthService: BasicAuthService) {
     super();
   }
@@ -45,7 +45,7 @@ export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
 }
 
 @Injectable()
-export class BasicAuthSignupGuard extends AuthGuard('basic-auth') {
+export class BasicAuthSignUpGuard extends AuthGuard('basic-auth') {
   constructor(private readonly basicAuthService: BasicAuthService) {
     super();
   }

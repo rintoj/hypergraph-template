@@ -2,15 +2,15 @@ import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthMetadata } from './basic-auth.model';
 import {
-  BasicAuthSigninGuard,
-  BasicAuthSignupGuard,
+  BasicAuthSignInGuard,
+  BasicAuthSignUpGuard,
 } from './basic-auth.strategy';
 
 @Resolver()
 export class BasicAuthResolver {
-  @UseGuards(BasicAuthSigninGuard)
+  @UseGuards(BasicAuthSignInGuard)
   @Mutation(() => AuthMetadata)
-  signinWithUsername(
+  signInWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,
     @Context() context: any,
@@ -21,9 +21,9 @@ export class BasicAuthResolver {
     return context.user;
   }
 
-  @UseGuards(BasicAuthSignupGuard)
+  @UseGuards(BasicAuthSignUpGuard)
   @Mutation(() => AuthMetadata)
-  signupWithUsername(
+  signUpWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,
     @Context() context: any,

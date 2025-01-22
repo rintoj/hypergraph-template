@@ -22,7 +22,7 @@ import { UserModule } from './user/user.module';
     StorageModule.forRoot({
       repositoryType: RepositoryType.Firestore,
       serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,
-      storageBucket: config.FIREBASE_STORAGE_BUCKET, // optional
+      storageBucket: config.FIREBASE_STORAGE_BUCKET,
     }),
     UserModule,
     AuthModule,

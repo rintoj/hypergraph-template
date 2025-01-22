@@ -6,8 +6,8 @@ import { AuthMetadata } from './basic-auth.model';
 import { BasicAuthResolver } from './basic-auth.resolver';
 import { BasicAuthService } from './basic-auth.service';
 import {
-  BasicAuthSigninGuard,
-  BasicAuthSignupGuard,
+  BasicAuthSignInGuard,
+  BasicAuthSignUpGuard,
 } from './basic-auth.strategy';
 
 @Module({
@@ -21,8 +21,8 @@ import {
   providers: [
     BasicAuthService,
     BasicAuthResolver,
-    BasicAuthSigninGuard,
-    BasicAuthSignupGuard,
+    BasicAuthSignInGuard,
+    BasicAuthSignUpGuard,
   ],
   exports: [BasicAuthService],
   controllers: [BasicAuthController],

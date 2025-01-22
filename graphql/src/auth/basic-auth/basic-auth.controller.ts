@@ -1,18 +1,18 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import {
-  BasicAuthSigninGuard,
-  BasicAuthSignupGuard,
+  BasicAuthSignInGuard,
+  BasicAuthSignUpGuard,
 } from './basic-auth.strategy';
 
 @Controller('/auth')
 export class BasicAuthController {
-  @UseGuards(BasicAuthSigninGuard)
+  @UseGuards(BasicAuthSignInGuard)
   @Post('/signin')
   async signin(@Req() request: any) {
     return request.user;
   }
 
-  @UseGuards(BasicAuthSignupGuard)
+  @UseGuards(BasicAuthSignUpGuard)
   @Post('/signup')
   async signup(@Req() request: any) {
     return request.user;
