@@ -1,11 +1,10 @@
 import * as admin from 'firebase-admin';
-import { UserRole } from '../user/user.enum';
-import { User } from '../user/user.model';
 import {
   decodeAuthToken,
   encodeAuthToken,
   expirationToSeconds,
 } from '../auth/auth.utils';
+import { User, UserRole } from '../user/user.model';
 
 export async function verifyFirestoreUserWithEmail(
   email: string,

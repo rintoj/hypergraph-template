@@ -1,13 +1,12 @@
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { UserRole } from '../user/user.enum';
-import { User, UserStatus } from '../user/user.model';
-import { UserRepository } from '../user/user.repository';
 import { RequestContext } from '../context';
 import {
   createFirestoreToken,
   createFirestoreUser,
   verifyFirestoreUserWithEmail,
 } from '../firebase/firebase-auth';
+import { User, UserRole, UserStatus } from '../user/user.model';
+import { UserRepository } from '../user/user.repository';
 import { CreateAccountInput, LoginWithEmailInput } from './auth.input';
 import { LoginResponse } from './auth.response';
 import { expirationToSeconds } from './auth.utils';

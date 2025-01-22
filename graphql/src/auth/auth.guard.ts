@@ -5,8 +5,8 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { APP_GUARD, Reflector } from '@nestjs/core';
-import { UserRole } from '../user/user.enum';
 import { RequestContext } from '../context';
+import { UserRole } from '../user/user.model';
 
 export const ROLES_KEY = 'roles';
 export const Authorized = (...roles: UserRole[]) =>

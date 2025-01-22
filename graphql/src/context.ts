@@ -1,6 +1,6 @@
 import { parse } from 'cookie';
 import { Request, Response } from 'express';
-import { UserRole } from './user/user.enum';
+import { UserRole } from './user/user.model';
 
 export type RequestContext = {
   request: Request;
