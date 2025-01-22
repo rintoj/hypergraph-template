@@ -3,16 +3,20 @@ import { FIRESTORE_INSTANCE } from '@hgraph/storage';
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 import { container } from 'tsyringe';
+import { config } from '../config';
+import { FirebaseAuthService } from './firebase-auth.service';
 
-@Module({})
+@Module({
+  providers: [FirebaseAuthService],
+  exports: [FirebaseAuthService],
+})
 export class FirebaseModule implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
-    const firebaseConfig = process.env.FIREBASE_CREDENTIAL;
-    const appCredentials = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    const firebaseConfig = config.FIREBASE_CREDENTIAL;
     admin.initializeApp({
       storageBucket,
-      ...(firebaseConfig && !appCredentials
+      ...(firebaseConfig
         ? { credential: admin.credential.cert(firebaseConfig) }
         : {}),
     });

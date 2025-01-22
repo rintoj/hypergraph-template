@@ -4,14 +4,14 @@ import {
   encodeAuthToken,
   expirationToSeconds,
 } from '../auth/auth.utils';
+import { config } from '../config';
 import { User, UserRole } from '../user/user.model';
 
 export async function verifyFirestoreUserWithEmail(
   email: string,
   password: string,
 ) {
-  const firebaseApiKey = process.env.FIREBASE_API_KEY;
-  const url = `https://identitytoolkit.googleapis.com/v1/users:signInWithPassword?key=${firebaseApiKey}`;
+  const url = `https://identitytoolkit.googleapis.com/v1/users:signInWithPassword?key=${config.FIREBASE_API_KEY}`;
   const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify({
@@ -20,8 +20,12 @@ export async function verifyFirestoreUserWithEmail(
       returnSecureToken: true,
     }),
   });
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    const text = await response.text();
+    console.log({ response, url, text, email, password });
+    throw new Error('Invalid email or password');
+  }
+  return await response.json();
 }
 
 export async function createFirestoreUser(

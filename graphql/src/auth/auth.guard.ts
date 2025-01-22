@@ -1,35 +1,59 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Injectable,
-  SetMetadata,
-} from '@nestjs/common';
-import { APP_GUARD, Reflector } from '@nestjs/core';
-import { RequestContext } from '../context';
+import { ExecutionContext, SetMetadata } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { UserRole } from '../user/user.model';
 
 export const ROLES_KEY = 'roles';
 export const Authorized = (...roles: UserRole[]) =>
   SetMetadata(ROLES_KEY, roles);
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
-  canActivate(executionContext: ExecutionContext): boolean {
-    const roles = this.reflector.get<UserRole[]>(
-      ROLES_KEY,
-      executionContext.getHandler(),
-    );
-    if (!roles) return true;
-    const context: RequestContext = executionContext.getArgByIndex(2);
-    if (!context.userId || !context.roles) {
-      return false;
-    }
-    if (!roles.length) return context.roles.includes(UserRole.User);
-    return roles.some((role) => context.roles.includes(role));
-  }
+export function isPublicEndpoint(
+  reflector: Reflector,
+  context: ExecutionContext,
+) {
+  return !!reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+    context.getHandler(),
+    context.getClass(),
+  ]);
 }
 
+// @Injectable()
+// export class JwtAuthGuard extends AuthGuard('jwt') {
+//   constructor(private reflector: Reflector) {
+//     super();
+//   }
+
+//   getRequest(context: ExecutionContext) {
+//     const ctx = GqlExecutionContext.create(context);
+//     return ctx.getContext().req;
+//   }
+
+//   async logIn(context: any) {
+//     console.log('JTWAuthGuard.login:', context);
+//   }
+
+//   canActivate(context: ExecutionContext) {
+//     console.log('JTWAuthGuard.canActivate:', context.getArgByIndex(1));
+//     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+//       context.getHandler(),
+//       context.getClass(),
+//     ]);
+//     if (isPublic) {
+//       return true;
+//     }
+//     return !super.canActivate(context);
+//   }
+
+//   handleRequest(err, user, info) {
+//     console.log('JTWAuthGuard.handleRequest:', user, info);
+//     if (err || !user) {
+//       throw err || new UnauthorizedException();
+//     }
+//     return user;
+//   }
+// }
+
 // Protects all the end points in the application
-export const GlobalAuthGuard = { provide: APP_GUARD, useClass: AuthGuard };
+// export const GlobalAuthGuard = { provide: APP_GUARD, useClass: JwtAuthGuard };

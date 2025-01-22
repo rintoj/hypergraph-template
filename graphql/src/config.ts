@@ -22,4 +22,7 @@ export const config = cleanEnv(process.env, {
 
   JWT_SECRET: str(),
   JWT_EXPIRY: str(),
+
+  FIREBASE_API_KEY: str(),
+  FIREBASE_CREDENTIAL: str(),
 });
