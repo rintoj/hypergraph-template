@@ -24,6 +24,11 @@ export class AuthResolver {
     return this.userService.findById(context.userId);
   }
 
+  @Query(() => User, { nullable: true })
+  async user(@Args('id') id: string): Promise<User> {
+    return this.userService.findById(id);
+  }
+
   @Mutation(() => User)
   async createUser(
     @Args({ name: 'input', type: () => CreateUserInput })

@@ -32,6 +32,7 @@ type Mutation {
 
 type Query {
   me: User
+  user(id: String!): User
 }
 
 type User {
