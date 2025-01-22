@@ -4,7 +4,10 @@ import { BasicAuthController } from './basic-auth.controller';
 import { BasicAuthRepository } from './basic-auth.repository';
 import { BasicAuthResolver } from './basic-auth.resolver';
 import { BasicAuthService } from './basic-auth.service';
-import { BasicAuthGuard, BasicAuthStrategy } from './basic-auth.strategy';
+import {
+  BasicAuthSignupGuard,
+  BasicAuthSigninGuard,
+} from './basic-auth.strategy';
 
 @Module({
   imports: [
@@ -16,9 +19,9 @@ import { BasicAuthGuard, BasicAuthStrategy } from './basic-auth.strategy';
   providers: [
     BasicAuthRepository,
     BasicAuthService,
-    BasicAuthStrategy,
     BasicAuthResolver,
-    BasicAuthGuard,
+    BasicAuthSigninGuard,
+    BasicAuthSignupGuard,
   ],
   exports: [BasicAuthService],
   controllers: [BasicAuthController],

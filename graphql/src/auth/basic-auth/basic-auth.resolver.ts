@@ -1,11 +1,11 @@
 import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { User } from '../../user/user.model';
-import { BasicAuthGuard } from './basic-auth.strategy';
+import { BasicAuthSigninGuard } from './basic-auth.strategy';
 
 @Resolver()
 export class BasicAuthResolver {
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthSigninGuard)
   @Mutation(() => User)
   signInWithUsername(
     @Args('username') username: string,

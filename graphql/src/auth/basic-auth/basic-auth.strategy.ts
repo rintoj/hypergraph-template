@@ -3,76 +3,69 @@ import {
   ContextType,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard, PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-local';
+import { AuthGuard } from '@nestjs/passport';
 import { LoginWithUsernameInput } from './basic-auth.input';
 import { BasicAuthService } from './basic-auth.service';
 
-@Injectable()
-export class BasicAuthStrategy extends PassportStrategy(
-  Strategy,
-  'basic-auth',
-) {
-  async logIn(context: any) {
-    console.log('BasicAuthStrategy.login:', context);
+export function getInputFromContext(context: ExecutionContext) {
+  const request =
+    context.getType<ContextType | 'graphql'>() === 'graphql'
+      ? context.getArgByIndex(1)
+      : context.getArgByIndex(0)?.body;
+  const validation = LoginWithUsernameInput.safeParse(request);
+  if (validation.success === false) {
+    throw new BadRequestException(
+      'The provided input format is incorrect. Please ensure that your request includes both "username" and "password" fields.',
+    );
   }
-
-  async validate(username: string, password: string): Promise<any> {
-    console.log('BasicAuthStrategy.validate:', username, password);
-    return null;
-  }
+  return validation.data;
 }
 
 @Injectable()
-export class BasicAuthGuard extends AuthGuard('basic-auth') {
+export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
   constructor(private readonly basicAuthService: BasicAuthService) {
     super();
   }
 
-  async logIn(context: any) {
-    console.log('BasicAuthGuard.login:', context);
-  }
-
-  getInput(context: ExecutionContext) {
-    console.log((context as any).type);
-    const request =
-      context.getType<ContextType | 'graphql'>() === 'graphql'
-        ? context.getArgByIndex(1)
-        : context.getArgByIndex(0)?.body;
-    const validation = LoginWithUsernameInput.safeParse(request);
-    if (validation.success === false) {
-      throw new BadRequestException(
-        'Invalid input format. Expected an object with "username" and "password" properties.',
-      );
-    }
-    return validation.data;
-  }
-
   async canActivate(context: ExecutionContext): Promise<any> {
-    const input = this.getInput(context);
-    console.log('BasicAuthGuard.canActivate:', input);
+    const input = getInputFromContext(context);
+    console.log('BasicAuthSigninGuard.canActivate:', input);
     const user = await this.basicAuthService.findByUsername(input.username);
     if (!user) {
-      throw new UnauthorizedException(
-        `A user with this username ('${input.username}') does not exist`,
+      throw new BadRequestException(
+        'Invalid username or password. Please verify your credentials and try again.',
       );
     }
     const metadata = await this.basicAuthService.saveAuthMetadata(
       input.username,
       input.password,
     );
-    console.log('BasicAuthGuard.metadata', metadata);
+    console.log('BasicAuthSigninGuard.metadata', metadata);
     return metadata;
   }
+}
 
-  handleRequest(err, user, info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    console.log('LocalGuard.handleRequest:', user, info);
-    if (err || !user) {
-      throw err || new UnauthorizedException();
+@Injectable()
+export class BasicAuthSignupGuard extends AuthGuard('basic-auth') {
+  constructor(private readonly basicAuthService: BasicAuthService) {
+    super();
+  }
+
+  async canActivate(context: ExecutionContext): Promise<any> {
+    const input = getInputFromContext(context);
+    console.log('BasicAuthSignupGuard.canActivate:', input);
+    const user = await this.basicAuthService.findByUsername(input.username);
+    if (user) {
+      throw new BadRequestException(
+        `The username '${input.username}' is already in use. Please verify your username or choose a different one.`,
+      );
     }
-    return user;
+    const metadata = await this.basicAuthService.saveAuthMetadata(
+      input.username,
+      input.password,
+    );
+    console.log('BasicAuthSignupGuard.metadata', metadata);
+    return metadata;
   }
 }

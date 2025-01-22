@@ -11,6 +11,12 @@ export class AuthMetadata {
   @Column()
   passwordHash: string;
 
+  @Column()
+  providerId!: string;
+
+  @Column()
+  providerType!: string;
+
   @Column({ nullable: true })
   lastSignInAt: Date;
 

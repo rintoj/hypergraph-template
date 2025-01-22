@@ -1,10 +1,11 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
 import { createFirestoreUser } from '../firebase/firebase-auth';
 import { User, UserRole, UserStatus } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { CreateUserInput } from './auth.input';
+import { BasicAuthSigninGuard } from './basic-auth/basic-auth.strategy';
 
 @Resolver()
 export class AuthResolver {
@@ -18,6 +19,7 @@ export class AuthResolver {
     return this.userService.findById(context.userId);
   }
 
+  @UseGuards(BasicAuthSigninGuard)
   @Query(() => User, { nullable: true })
   async user(@Args('id') id: string): Promise<User> {
     return this.userService.findById(id);
