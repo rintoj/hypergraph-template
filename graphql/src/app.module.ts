@@ -1,31 +1,24 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AuthGuardProvider } from './auth/auth.guard';
 import { AuthModule } from './auth/auth.module';
-import { createContext } from './context';
-import { verifyAndDecodeFirestoreToken } from './firebase/firebase-auth';
+import { config } from './config';
 import { FirestoreProviderModule } from './firebase/firebase.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      playground: true,
-      autoSchemaFile:
-        process.env.NODE_ENV !== 'production' ? './schema.gql' : true,
+      playground: config.GRAPHQL_PLAYGROUND,
+      autoSchemaFile: config.SCHEMA_FILE,
+      path: config.GRAPHQL_PATH,
       introspection: true,
       sortSchema: true,
       installSubscriptionHandlers: false,
-      context: createContext(verifyAndDecodeFirestoreToken),
-      path: '/',
-    }),
-    ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV !== 'production' ? '.env.local' : '.env',
+      context: ({ req, res }) => ({ req, res }),
     }),
     FirestoreProviderModule,
     AccountModule,

@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { cleanEnv, num, str } from 'envalid';
+import { bool, cleanEnv, num, str } from 'envalid';
 
 const configFile =
   process.env.NODE_ENV !== 'production'
@@ -17,6 +17,8 @@ export const config = cleanEnv(process.env, {
   PORT: num(),
 
   SCHEMA_FILE: str({ default: true as any, devDefault: './schema.gql' }),
+  GRAPHQL_PLAYGROUND: bool({ default: false, devDefault: true }),
+  GRAPHQL_PATH: str({ default: '/graphql' }),
 
   JWT_SECRET: str(),
   JWT_EXPIRY: str(),
