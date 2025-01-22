@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthMetadata {
+  id: String!
+  providerType: String!
+  username: String!
+}
+
 input CreateUserInput {
   email: String!
   name: String!
@@ -16,7 +22,8 @@ scalar DateTime
 type Mutation {
   createUser(input: CreateUserInput!): User!
   logout: Boolean!
-  signInWithUsername(password: String!, username: String!): User!
+  signinWithUsername(password: String!, username: String!): AuthMetadata!
+  signupWithUsername(password: String!, username: String!): AuthMetadata!
 }
 
 type Query {

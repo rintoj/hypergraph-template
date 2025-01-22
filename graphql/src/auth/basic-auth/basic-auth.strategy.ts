@@ -1,19 +1,16 @@
 import {
   BadRequestException,
-  ContextType,
   ExecutionContext,
   Injectable,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { getInputFromContext, getRequestContext } from '../util/guard.util';
 import { LoginWithUsernameInput } from './basic-auth.input';
 import { BasicAuthService } from './basic-auth.service';
 
-export function getInputFromContext(context: ExecutionContext) {
-  const request =
-    context.getType<ContextType | 'graphql'>() === 'graphql'
-      ? context.getArgByIndex(1)
-      : context.getArgByIndex(0)?.body;
-  const validation = LoginWithUsernameInput.safeParse(request);
+function getInput(context: ExecutionContext) {
+  const input = getInputFromContext(context);
+  const validation = LoginWithUsernameInput.safeParse(input);
   if (validation.success === false) {
     throw new BadRequestException(
       'The provided input format is incorrect. Please ensure that your request includes both "username" and "password" fields.',
@@ -29,8 +26,7 @@ export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
   }
 
   async canActivate(context: ExecutionContext): Promise<any> {
-    const input = getInputFromContext(context);
-    console.log('BasicAuthSigninGuard.canActivate:', input);
+    const input = getInput(context);
     const user = await this.basicAuthService.findByUsername(input.username);
     if (!user) {
       throw new BadRequestException(
@@ -41,7 +37,12 @@ export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
       input.username,
       input.password,
     );
-    console.log('BasicAuthSigninGuard.metadata', metadata);
+    const request = getRequestContext(context);
+    request.user = {
+      id: metadata.id,
+      username: metadata.username,
+      providerType: metadata.providerType,
+    };
     return metadata;
   }
 }
@@ -53,8 +54,7 @@ export class BasicAuthSignupGuard extends AuthGuard('basic-auth') {
   }
 
   async canActivate(context: ExecutionContext): Promise<any> {
-    const input = getInputFromContext(context);
-    console.log('BasicAuthSignupGuard.canActivate:', input);
+    const input = getInput(context);
     const user = await this.basicAuthService.findByUsername(input.username);
     if (user) {
       throw new BadRequestException(
@@ -65,7 +65,12 @@ export class BasicAuthSignupGuard extends AuthGuard('basic-auth') {
       input.username,
       input.password,
     );
-    console.log('BasicAuthSignupGuard.metadata', metadata);
-    return metadata;
+    const request = getRequestContext(context);
+    request.user = {
+      id: metadata.id,
+      username: metadata.username,
+      providerType: metadata.providerType,
+    };
+    return true;
   }
 }
