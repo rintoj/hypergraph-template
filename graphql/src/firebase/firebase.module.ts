@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import { container } from 'tsyringe';
 
 @Module({})
-export class FirestoreProviderModule implements OnApplicationBootstrap {
+export class FirebaseModule implements OnApplicationBootstrap {
   async onApplicationBootstrap() {
     const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
     const firebaseConfig = process.env.FIREBASE_CREDENTIAL;

@@ -4,7 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { config } from './config';
-import { FirestoreProviderModule } from './firebase/firebase.module';
+import { FirebaseModule } from './firebase/firebase.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -19,7 +19,7 @@ import { UserModule } from './user/user.module';
       installSubscriptionHandlers: false,
       context: ({ req, res }) => ({ req, res }),
     }),
-    FirestoreProviderModule,
+    FirebaseModule,
     UserModule,
     AuthModule,
   ],
