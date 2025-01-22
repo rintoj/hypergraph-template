@@ -1,22 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { z } from 'zod';
 
-@InputType()
-export class CreateUserInput {
-  @Field()
-  name!: string;
-
-  @Field()
-  email!: string;
-
-  @Field()
-  password!: string;
-}
-
-@InputType()
-export class LoginWithEmailInput {
-  @Field()
-  email!: string;
-
-  @Field()
-  password!: string;
-}
+export const LoginWithUsernameInput = z.object({
+  username: z.string(),
+  password: z.string(),
+});
+export type LoginWithUsernameInput = z.infer<typeof LoginWithUsernameInput>;

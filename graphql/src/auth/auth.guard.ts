@@ -1,59 +1,89 @@
-import { ExecutionContext, SetMetadata } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { UserRole } from '../user/user.model';
+import {
+  BadRequestException,
+  ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { LoginWithUsernameInput } from './auth.input';
+import { AuthService } from './auth.service';
+import {
+  getContextFromExecutionCtx,
+  getInputFromContext,
+  getResponseFromContext,
+} from './util/guard.util';
 
-export const ROLES_KEY = 'roles';
-export const Authorized = (...roles: UserRole[]) =>
-  SetMetadata(ROLES_KEY, roles);
-
-export const IS_PUBLIC_KEY = 'isPublic';
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
-
-export function isPublicEndpoint(
-  reflector: Reflector,
-  context: ExecutionContext,
-) {
-  return !!reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-    context.getHandler(),
-    context.getClass(),
-  ]);
+function getInput(context: ExecutionContext) {
+  const input = getInputFromContext(context);
+  const validation = LoginWithUsernameInput.safeParse(input);
+  if (validation.success === false) {
+    throw new BadRequestException(
+      'The provided input format is incorrect. Please ensure that your request includes both "username" and "password" fields.',
+    );
+  }
+  return validation.data;
 }
 
-// @Injectable()
-// export class JwtAuthGuard extends AuthGuard('jwt') {
-//   constructor(private reflector: Reflector) {
-//     super();
-//   }
+@Injectable()
+export class AuthSignInGuard extends AuthGuard('basic-auth') {
+  constructor(private readonly basicAuthService: AuthService) {
+    super();
+  }
 
-//   getRequest(context: ExecutionContext) {
-//     const ctx = GqlExecutionContext.create(context);
-//     return ctx.getContext().req;
-//   }
+  async canActivate(context: ExecutionContext): Promise<any> {
+    const input = getInput(context);
+    const user = await this.basicAuthService.findByUsername(input.username);
+    if (!user) {
+      throw new BadRequestException(
+        'Invalid username or password. Please verify your credentials and try again.',
+      );
+    }
+    const { accessToken, refreshToken } = this.basicAuthService.generateTokens({
+      userId: user.id,
+    });
+    const response = getResponseFromContext(context);
+    this.basicAuthService.attachTokensToResponse(
+      response,
+      accessToken,
+      refreshToken,
+    );
+    const metadata = await this.basicAuthService.saveSigninData(
+      input.username,
+      refreshToken,
+    );
+    const request = getContextFromExecutionCtx(context);
+    request.user = {
+      id: metadata.id,
+      username: metadata.username,
+      providerType: metadata.providerType,
+    };
+    return metadata;
+  }
+}
 
-//   async logIn(context: any) {
-//     console.log('JTWAuthGuard.login:', context);
-//   }
+@Injectable()
+export class AuthSignUpGuard extends AuthGuard('basic-auth') {
+  constructor(private readonly basicAuthService: AuthService) {
+    super();
+  }
 
-//   canActivate(context: ExecutionContext) {
-//     console.log('JTWAuthGuard.canActivate:', context.getArgByIndex(1));
-//     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-//       context.getHandler(),
-//       context.getClass(),
-//     ]);
-//     if (isPublic) {
-//       return true;
-//     }
-//     return !super.canActivate(context);
-//   }
-
-//   handleRequest(err, user, info) {
-//     console.log('JTWAuthGuard.handleRequest:', user, info);
-//     if (err || !user) {
-//       throw err || new UnauthorizedException();
-//     }
-//     return user;
-//   }
-// }
-
-// Protects all the end points in the application
-// export const GlobalAuthGuard = { provide: APP_GUARD, useClass: JwtAuthGuard };
+  async canActivate(context: ExecutionContext): Promise<any> {
+    const input = getInput(context);
+    const user = await this.basicAuthService.findByUsername(input.username);
+    if (user) {
+      throw new BadRequestException(
+        `The username '${input.username}' is already in use. Please verify your username or choose a different one.`,
+      );
+    }
+    const metadata = await this.basicAuthService.saveAuthMetadata(
+      input.username,
+      input.password,
+    );
+    const request = getContextFromExecutionCtx(context);
+    request.user = {
+      id: metadata.id,
+      username: metadata.username,
+      providerType: metadata.providerType,
+    };
+    return true;
+  }
+}

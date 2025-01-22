@@ -1,11 +1,37 @@
+import { config } from '@/config';
+import { StorageModule } from '@hgraph/storage/nestjs';
 import { Module } from '@nestjs/common';
-import { UserModule } from '../user/user.module';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { AuthGlobalStrategy } from './auth-global.strategy';
+import { AuthController } from './auth.controller';
+import { AuthSignInGuard, AuthSignUpGuard } from './auth.guard';
+import { AuthMetadata } from './auth.model';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
-import { BasicAuthModule } from './basic-auth';
+import { LocalAuthStrategy } from './auth.strategy';
 
 @Module({
-  imports: [UserModule, BasicAuthModule],
-  providers: [AuthResolver, AuthService],
+  imports: [
+    PassportModule.register({
+      session: true,
+      defaultStrategy: 'jwt',
+    }),
+    JwtModule.register({
+      secret: config.JWT_SECRET,
+      signOptions: { expiresIn: config.JWT_EXPIRY },
+    }),
+    StorageModule.forFeature([AuthMetadata]),
+  ],
+  providers: [
+    AuthGlobalStrategy,
+    AuthResolver,
+    AuthService,
+    AuthSignInGuard,
+    AuthSignUpGuard,
+    LocalAuthStrategy,
+  ],
+  exports: [AuthService],
+  controllers: [AuthController],
 })
 export class AuthModule {}

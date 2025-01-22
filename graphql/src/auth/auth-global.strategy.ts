@@ -1,11 +1,11 @@
+import { config } from '@/config';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { parse } from 'cookie';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { config } from '../../config';
 
 @Injectable()
-export class BasicAuthGlobalStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class AuthGlobalStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
     super({
       secretOrKey: config.JWT_SECRET,
@@ -23,9 +23,9 @@ export class BasicAuthGlobalStrategy extends PassportStrategy(Strategy, 'jwt') {
       ]),
     });
   }
-  validate(data, verified) {
-    console.log(data, verified);
+
+  validate(data, verified, a, b) {
+    console.log({ data, verified, a, b });
     verified(null, data);
-    // super.validate(...args);
   }
 }
