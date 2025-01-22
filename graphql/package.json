@@ -23,7 +23,7 @@
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "@google-cloud/storage": "^7.15.0",
-    "@hgraph/storage": "1.1.8",
+    "@hgraph/storage": "1.2.0",
     "@nestjs/apollo": "^13.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "4.0.0",

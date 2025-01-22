@@ -15,8 +15,8 @@ importers:
         specifier: ^7.15.0
         version: 7.15.0
       '@hgraph/storage':
-        specifier: 1.1.8
-        version: 1.1.8(firebase-admin@11.10.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
+        specifier: 1.2.0
+        version: 1.2.0(@google-cloud/storage@7.15.0)(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(firebase-admin@11.10.1)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
       '@nestjs/apollo':
         specifier: ^13.0.2
         version: 13.0.2(@apollo/server@4.11.3(graphql@16.10.0))(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.3(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.0.3)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/graphql@13.0.2(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.0.3(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.0.3)(reflect-metadata@0.2.2)(rxjs@7.8.1))(class-validator@0.14.1)(graphql@16.10.0)(reflect-metadata@0.2.2))(graphql@16.10.0)
@@ -575,9 +575,11 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@hgraph/storage@1.1.8':
-    resolution: {integrity: sha512-+xhr73prkeBrGEBzFhfevKlYsBR0/4MPB0RJkqUOfTKMvI5jqkF6Hj3rVZSqtRIAxoOhqIoqQOsLp9qL4dqAmg==}
+  '@hgraph/storage@1.2.0':
+    resolution: {integrity: sha512-5ypwt61Z7ih3l1Y9PGP3uBlv4aKFDH2SGWHsTKzA6Y7aReLyJLj3n6YLWY5cKeU1pAVZGC/YVqocGq69985pKw==}
     peerDependencies:
+      '@google-cloud/storage': ^7.15.0
+      '@nestjs/common': ^11.0.4
       firebase-admin: ^11.10.1
 
   '@humanwhocodes/config-array@0.13.0':
@@ -1748,9 +1750,6 @@ packages:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
     engines: {node: '>=0.3.1'}
 
-  discontinuous-range@1.0.0:
-    resolution: {integrity: sha512-c68LpLbO+7kP/b1Hr1qs8/BJ09F5khZGTxqxZuhzxpmwJKOgRFHJWIb9/KmqnqHhLdO55aOxFH/EGBvUQbL/RQ==}
-
   doctrine@3.0.0:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
@@ -2348,9 +2347,6 @@ packages:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
 
-  immutable@4.3.7:
-    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
-
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -2442,9 +2438,6 @@ packages:
 
   isarray@1.0.0:
     resolution: {integrity: sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==}
-
-  isarray@2.0.5:
-    resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
 
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
@@ -2669,10 +2662,6 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
-  json-stable-stringify@1.2.1:
-    resolution: {integrity: sha512-Lp6HbbBgosLmJbjx0pBLbgvx68FaFU1sdkmBuckmhhJ88kL13OA51CDtR2yJB50eCNMH9wRqtQNNiAqQH4YXnA==}
-    engines: {node: '>= 0.4'}
-
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
@@ -2686,9 +2675,6 @@ packages:
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
-
-  jsonify@0.0.1:
-    resolution: {integrity: sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==}
 
   jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-PRp66vJ865SSqOlgqS8hujT5U4AOgMfhrwYIuIhfKaoSCZcirrmASQr8CX7cUg+RMih+hgznrjp99o+W4pJLHQ==}
@@ -2982,12 +2968,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
-
-  moo@0.5.2:
-    resolution: {integrity: sha512-iSAJLHYKnX41mKcJKjqvnAN9sf0LMDTXDEvFv+ffuRR9a1MIuXLjMNL6EsnDHSkKLTWNqQQ5uo61P4EbU4NU+Q==}
-
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -3021,10 +3001,6 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
-
-  nearley@2.20.1:
-    resolution: {integrity: sha512-+Mc8UaAebFzgV+KpI5n7DasuuQCHA89dmwm7JXw3TV43ukfNQ9DnBH3Mdb2g/I4Fdxc26pwimBWvjIw0UAILSQ==}
-    hasBin: true
 
   negotiator@0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
@@ -3090,20 +3066,12 @@ packages:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
 
-  object-hash@2.2.0:
-    resolution: {integrity: sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==}
-    engines: {node: '>= 6'}
-
   object-hash@3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
 
   object-inspect@1.13.3:
     resolution: {integrity: sha512-kDCGIbxkDSXE3euJZZXzc6to7fCrKHNI/hSRQnRuQ+BWjFNzZwiFF8fj/6o2t2G9/jTj8PSIYTfCLelLZEeRpA==}
-    engines: {node: '>= 0.4'}
-
-  object-keys@1.1.1:
-    resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
 
   on-finished@2.4.1:
@@ -3235,35 +3203,6 @@ packages:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
 
-  pg-mem@2.9.1:
-    resolution: {integrity: sha512-OYq8vde7qwvAWGCEtIjkBu6zScGYD8hp3ldDIzVgQa1vtuU8ymWww/4fvcgLuFMmDl0r3NX+ZOCw254+/cLdAA==}
-    peerDependencies:
-      '@mikro-orm/core': '>=4.5.3'
-      '@mikro-orm/postgresql': '>=4.5.3'
-      knex: '>=0.20'
-      kysely: '>=0.26'
-      mikro-orm: '*'
-      pg-promise: '>=10.8.7'
-      slonik: '>=23.0.1'
-      typeorm: '>=0.2.29'
-    peerDependenciesMeta:
-      '@mikro-orm/core':
-        optional: true
-      '@mikro-orm/postgresql':
-        optional: true
-      knex:
-        optional: true
-      kysely:
-        optional: true
-      mikro-orm:
-        optional: true
-      pg-promise:
-        optional: true
-      slonik:
-        optional: true
-      typeorm:
-        optional: true
-
   pg-pool@3.7.0:
     resolution: {integrity: sha512-ZOBQForurqh4zZWjrgSwwAtzJ7QiRX0ovFkZr2klsen3Nm0aoh33Ls0fzfv3imeH/nw/O27cjdz5kzYJfeGp/g==}
     peerDependencies:
@@ -3287,9 +3226,6 @@ packages:
 
   pgpass@1.0.5:
     resolution: {integrity: sha512-FdW9r/jQZhSeohs1Z3sI1yxFQNFvMcnmfuj4WBMUTxOrAyLMaTcE1aAMBiTlbMNaXvBCQuVi0R7hd8udDSP7ug==}
-
-  pgsql-ast-parser@12.0.1:
-    resolution: {integrity: sha512-pe8C6Zh5MsS+o38WlSu18NhrTjAv1UNMeDTs2/Km2ZReZdYBYtwtbWGZKK2BM2izv5CrQpbmP0oI10wvHOwv4A==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -3406,13 +3342,6 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  railroad-diagrams@1.0.0:
-    resolution: {integrity: sha512-cz93DjNeLY0idrCNOH6PviZGRN9GJhsdm9hpn1YCS879fj4W+x5IFJhhkRZcwVgMmFF7R82UA/7Oh+R8lLZg6A==}
-
-  randexp@0.4.6:
-    resolution: {integrity: sha512-80WNmd9DA0tmZrw9qQa62GPPWfuXJknrmVmLcxvq4uZBdYqb1wYoKTmnlGUchvVWe0XiLupYkBoXVOxz3C8DYQ==}
-    engines: {node: '>=0.12'}
-
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -3488,10 +3417,6 @@ packages:
   restore-cursor@3.1.0:
     resolution: {integrity: sha512-l+sSefzHpj5qimhFSE5a8nufZYAM3sBSVMAPtYkmC+4EH2anSGaEMXSD0izRQbu9nfyQ9y5JrVmp7E8oZrUjvA==}
     engines: {node: '>=8'}
-
-  ret@0.1.15:
-    resolution: {integrity: sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==}
-    engines: {node: '>=0.12'}
 
   retry-request@5.0.2:
     resolution: {integrity: sha512-wfI3pk7EE80lCIXprqh7ym48IHYdwmAAzESdbU8Q9l7pnRCk9LEhpbOTNKjz6FARLm/Bl5m+4F0ABxOkYUujSQ==}
@@ -4796,8 +4721,10 @@ snapshots:
       yargs: 17.7.2
     optional: true
 
-  '@hgraph/storage@1.1.8(firebase-admin@11.10.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))':
+  '@hgraph/storage@1.2.0(@google-cloud/storage@7.15.0)(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(firebase-admin@11.10.1)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))':
     dependencies:
+      '@google-cloud/storage': 7.15.0
+      '@nestjs/common': 11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       class-validator: 0.14.1
       dataloader: 2.2.3
       fast-glob: 3.3.3
@@ -4805,31 +4732,23 @@ snapshots:
       lodash: 4.17.21
       name-util: 1.3.0
       nanoid: 3.1.23
-      pg: 8.13.1
-      pg-mem: 2.9.1(typeorm@0.3.20(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3)))
       tsds-tools: 1.2.1
       tsyringe: 4.8.0
       typeorm: 0.3.20(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
     transitivePeerDependencies:
       - '@google-cloud/spanner'
-      - '@mikro-orm/core'
-      - '@mikro-orm/postgresql'
       - '@sap/hana-client'
       - better-sqlite3
       - hdb-pool
       - ioredis
-      - knex
-      - kysely
-      - mikro-orm
       - mongodb
       - mssql
       - mysql2
       - oracledb
+      - pg
       - pg-native
-      - pg-promise
       - pg-query-stream
       - redis
-      - slonik
       - sql.js
       - sqlite3
       - supports-color
@@ -6243,8 +6162,6 @@ snapshots:
 
   diff@4.0.2: {}
 
-  discontinuous-range@1.0.0: {}
-
   doctrine@3.0.0:
     dependencies:
       esutils: 2.0.3
@@ -6741,7 +6658,8 @@ snapshots:
 
   function-bind@1.1.2: {}
 
-  functional-red-black-tree@1.0.1: {}
+  functional-red-black-tree@1.0.1:
+    optional: true
 
   gauge@3.0.2:
     dependencies:
@@ -7034,8 +6952,6 @@ snapshots:
 
   ignore@5.3.2: {}
 
-  immutable@4.3.7: {}
-
   import-fresh@3.3.0:
     dependencies:
       parent-module: 1.0.1
@@ -7137,8 +7053,6 @@ snapshots:
   is-unicode-supported@0.1.0: {}
 
   isarray@1.0.0: {}
-
-  isarray@2.0.5: {}
 
   isexe@2.0.0: {}
 
@@ -7570,14 +7484,6 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
-  json-stable-stringify@1.2.1:
-    dependencies:
-      call-bind: 1.0.8
-      call-bound: 1.0.3
-      isarray: 2.0.5
-      jsonify: 0.0.1
-      object-keys: 1.1.1
-
   json5@2.2.3: {}
 
   jsonc-parser@3.2.1: {}
@@ -7589,8 +7495,6 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
-
-  jsonify@0.0.1: {}
 
   jsonwebtoken@9.0.2:
     dependencies:
@@ -7861,10 +7765,6 @@ snapshots:
 
   mkdirp@2.1.6: {}
 
-  moment@2.30.1: {}
-
-  moo@0.5.2: {}
-
   ms@2.0.0: {}
 
   ms@2.1.2: {}
@@ -7896,13 +7796,6 @@ snapshots:
   nanoid@3.1.23: {}
 
   natural-compare@1.4.0: {}
-
-  nearley@2.20.1:
-    dependencies:
-      commander: 2.20.3
-      moo: 0.5.2
-      railroad-diagrams: 1.0.0
-      randexp: 0.4.6
 
   negotiator@0.6.3: {}
 
@@ -7949,14 +7842,10 @@ snapshots:
 
   object-assign@4.1.1: {}
 
-  object-hash@2.2.0: {}
-
   object-hash@3.0.0:
     optional: true
 
   object-inspect@1.13.3: {}
-
-  object-keys@1.1.1: {}
 
   on-finished@2.4.1:
     dependencies:
@@ -8085,27 +7974,19 @@ snapshots:
   pg-cloudflare@1.1.1:
     optional: true
 
-  pg-connection-string@2.7.0: {}
+  pg-connection-string@2.7.0:
+    optional: true
 
-  pg-int8@1.0.1: {}
-
-  pg-mem@2.9.1(typeorm@0.3.20(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))):
-    dependencies:
-      functional-red-black-tree: 1.0.1
-      immutable: 4.3.7
-      json-stable-stringify: 1.2.1
-      lru-cache: 6.0.0
-      moment: 2.30.1
-      object-hash: 2.2.0
-      pgsql-ast-parser: 12.0.1
-    optionalDependencies:
-      typeorm: 0.3.20(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
+  pg-int8@1.0.1:
+    optional: true
 
   pg-pool@3.7.0(pg@8.13.1):
     dependencies:
       pg: 8.13.1
+    optional: true
 
-  pg-protocol@1.7.0: {}
+  pg-protocol@1.7.0:
+    optional: true
 
   pg-types@2.2.0:
     dependencies:
@@ -8114,6 +7995,7 @@ snapshots:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
+    optional: true
 
   pg@8.13.1:
     dependencies:
@@ -8124,15 +8006,12 @@ snapshots:
       pgpass: 1.0.5
     optionalDependencies:
       pg-cloudflare: 1.1.1
+    optional: true
 
   pgpass@1.0.5:
     dependencies:
       split2: 4.2.0
-
-  pgsql-ast-parser@12.0.1:
-    dependencies:
-      moo: 0.5.2
-      nearley: 2.20.1
+    optional: true
 
   picocolors@1.1.1: {}
 
@@ -8148,15 +8027,19 @@ snapshots:
 
   pluralize@8.0.0: {}
 
-  postgres-array@2.0.0: {}
+  postgres-array@2.0.0:
+    optional: true
 
-  postgres-bytea@1.0.0: {}
+  postgres-bytea@1.0.0:
+    optional: true
 
-  postgres-date@1.0.7: {}
+  postgres-date@1.0.7:
+    optional: true
 
   postgres-interval@1.2.0:
     dependencies:
       xtend: 4.0.2
+    optional: true
 
   prelude-ls@1.1.2:
     optional: true
@@ -8259,13 +8142,6 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  railroad-diagrams@1.0.0: {}
-
-  randexp@0.4.6:
-    dependencies:
-      discontinuous-range: 1.0.0
-      ret: 0.1.15
-
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -8343,8 +8219,6 @@ snapshots:
     dependencies:
       onetime: 5.1.2
       signal-exit: 3.0.7
-
-  ret@0.1.15: {}
 
   retry-request@5.0.2:
     dependencies:
@@ -8554,7 +8428,8 @@ snapshots:
 
   source-map@0.7.4: {}
 
-  split2@4.2.0: {}
+  split2@4.2.0:
+    optional: true
 
   sprintf-js@1.0.3: {}
 
