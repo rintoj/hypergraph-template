@@ -1,4 +1,5 @@
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { BadRequestException } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
 import {
   createFirestoreToken,
@@ -6,46 +7,48 @@ import {
   verifyFirestoreUserWithEmail,
 } from '../firebase/firebase-auth';
 import { User, UserRole, UserStatus } from '../user/user.model';
-import { UserRepository } from '../user/user.repository';
+import { UserService } from '../user/user.service';
 import { CreateAccountInput, LoginWithEmailInput } from './auth.input';
 import { LoginResponse } from './auth.response';
 import { expirationToSeconds } from './auth.utils';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly accountRepository: UserRepository) {}
+  constructor(private readonly userService: UserService) {}
+
+  @Query(() => User, { nullable: true })
+  async me(
+    @Context()
+    context: RequestContext,
+  ): Promise<User> {
+    return this.userService.findById(context.accountId);
+  }
 
   @Mutation(() => User)
   async createAccount(
     @Args({ name: 'input', type: () => CreateAccountInput })
     input: CreateAccountInput,
   ): Promise<User> {
-    const accountByEmail = await this.accountRepository.findOne((q) =>
-      q.whereEqualTo('email', input.email),
-    );
+    const accountByEmail = await this.userService.findByEmail(input.email);
     if (accountByEmail) {
-      throw new Error(
-        `An account with this email (${input.email}) already exists`,
+      throw new BadRequestException(
+        `An user with the email address (${input.email}) already exists. Please use a different email address.`,
       );
     }
-
     const userRecord = await createFirestoreUser(
       input.name,
       input.email,
       input.password,
     );
-
-    const account = await this.accountRepository.insert({
+    return await this.userService.createUser({
       name: input.name,
       email: input.email,
       providerUid: userRecord.uid,
       isEmailVerified: userRecord.emailVerified,
       photoURL: userRecord.photoURL,
-
       status: userRecord.disabled ? UserStatus.Disabled : UserStatus.Active,
       roles: [UserRole.User],
     });
-    return account;
   }
 
   @Mutation(() => LoginResponse)
@@ -56,9 +59,7 @@ export class AuthResolver {
     @Context()
     context: RequestContext,
   ): Promise<LoginResponse> {
-    const account = await this.accountRepository.findOne((q) =>
-      q.whereEqualTo('email', input.email),
-    );
+    const account = await this.userService.findByEmail(input.email);
     if (!account) {
       throw new Error(
         `An account with this email (${input.email}) does not exist`,
