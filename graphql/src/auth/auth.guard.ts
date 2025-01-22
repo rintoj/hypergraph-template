@@ -5,11 +5,11 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { APP_GUARD, Reflector } from '@nestjs/core';
-import { AccountRole } from '../account/account-role.enum';
+import { UserRole } from '../user/user.enum';
 import { RequestContext } from '../context';
 
 export const ROLES_KEY = 'roles';
-export const Authorized = (...roles: AccountRole[]) =>
+export const Authorized = (...roles: UserRole[]) =>
   SetMetadata(ROLES_KEY, roles);
 
 @Injectable()
@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(executionContext: ExecutionContext): boolean {
-    const roles = this.reflector.get<AccountRole[]>(
+    const roles = this.reflector.get<UserRole[]>(
       ROLES_KEY,
       executionContext.getHandler(),
     );
@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
     if (!context.accountId || !context.roles) {
       return false;
     }
-    if (!roles.length) return context.roles.includes(AccountRole.User);
+    if (!roles.length) return context.roles.includes(UserRole.User);
     return roles.some((role) => context.roles.includes(role));
   }
 }

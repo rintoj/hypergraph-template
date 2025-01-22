@@ -1,10 +1,10 @@
 import { FirestoreRepository } from '@hgraph/storage';
 import { Injectable } from '@nestjs/common';
-import { Account } from './account.model';
+import { User } from './user.model';
 
 @Injectable()
-export class AccountRepository extends FirestoreRepository<Account> {
+export class UserRepository extends FirestoreRepository<User> {
   constructor() {
-    super(Account);
+    super(User);
   }
 }

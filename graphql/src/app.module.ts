@@ -1,7 +1,7 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AccountModule } from './account/account.module';
+import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
 import { AuthGuardProvider } from './auth/auth.guard';
 import { AuthModule } from './auth/auth.module';
@@ -21,7 +21,7 @@ import { FirestoreProviderModule } from './firebase/firebase.module';
       context: ({ req, res }) => ({ req, res }),
     }),
     FirestoreProviderModule,
-    AccountModule,
+    UserModule,
     AuthModule,
   ],
   controllers: [AppController],

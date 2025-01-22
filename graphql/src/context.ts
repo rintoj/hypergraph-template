@@ -1,13 +1,13 @@
 import { parse } from 'cookie';
 import { Request, Response } from 'express';
-import { AccountRole } from './account/account-role.enum';
+import { UserRole } from './user/user.enum';
 
 export type RequestContext = {
   request: Request;
   response: Response;
   idToken?: string;
   accountId?: string;
-  roles?: AccountRole[];
+  roles?: UserRole[];
 };
 
 type TokenDecoder = (
@@ -42,7 +42,7 @@ export function createContext(decodeToken: TokenDecoder | undefined) {
       response,
       idToken: decodedToken?.idToken,
       accountId: decodedToken?.accountId,
-      roles: decodedToken?.roles as AccountRole[],
+      roles: decodedToken?.roles as UserRole[],
     };
   };
 }

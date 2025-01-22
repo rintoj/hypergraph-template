@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { AccountRole } from '../account/account-role.enum';
-import { Account, AccountStatus } from '../account/account.model';
-import { AccountRepository } from '../account/account.repository';
+import { UserRole } from '../user/user.enum';
+import { User, UserStatus } from '../user/user.model';
+import { UserRepository } from '../user/user.repository';
 import { RequestContext } from '../context';
 import {
   createFirestoreToken,
@@ -14,13 +14,13 @@ import { expirationToSeconds } from './auth.utils';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly accountRepository: AccountRepository) {}
+  constructor(private readonly accountRepository: UserRepository) {}
 
-  @Mutation(() => Account)
+  @Mutation(() => User)
   async createAccount(
     @Args({ name: 'input', type: () => CreateAccountInput })
     input: CreateAccountInput,
-  ): Promise<Account> {
+  ): Promise<User> {
     const accountByEmail = await this.accountRepository.findOne((q) =>
       q.whereEqualTo('email', input.email),
     );
@@ -43,10 +43,8 @@ export class AuthResolver {
       isEmailVerified: userRecord.emailVerified,
       photoURL: userRecord.photoURL,
 
-      status: userRecord.disabled
-        ? AccountStatus.Disabled
-        : AccountStatus.Active,
-      roles: [AccountRole.User],
+      status: userRecord.disabled ? UserStatus.Disabled : UserStatus.Active,
+      roles: [UserRole.User],
     });
     return account;
   }

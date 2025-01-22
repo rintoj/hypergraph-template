@@ -1,13 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { AccountRole } from './account-role.enum';
+import { UserRole } from './user.enum';
 
-export enum AccountStatus {
+export enum UserStatus {
   Active = 'Active',
   Disabled = 'Disabled',
 }
 
 @ObjectType()
-export class Account {
+export class User {
   @Field(() => ID, { nullable: true })
   id?: string;
 
@@ -17,8 +17,8 @@ export class Account {
   @Field({ nullable: true })
   email?: string;
 
-  @Field(() => [AccountRole])
-  roles!: AccountRole[];
+  @Field(() => [UserRole])
+  roles!: UserRole[];
 
   @Field(() => Date, { nullable: true })
   createdAt?: Date;
@@ -29,8 +29,7 @@ export class Account {
   @Field(() => String, { nullable: true })
   photoURL?: string;
 
-  status!: AccountStatus;
-
+  status!: UserStatus;
   providerUid!: string;
   isEmailVerified?: boolean;
 }
