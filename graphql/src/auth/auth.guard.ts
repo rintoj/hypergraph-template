@@ -31,4 +31,5 @@ export class AuthGuard implements CanActivate {
   }
 }
 
-export const AuthGuardProvider = { provide: APP_GUARD, useClass: AuthGuard };
+// Protects all the end points in the application
+export const GlobalAuthGuard = { provide: APP_GUARD, useClass: AuthGuard };
