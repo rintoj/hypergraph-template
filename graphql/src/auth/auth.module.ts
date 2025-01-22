@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { FirebaseModule } from '../firebase/firebase.module';
 import { UserModule } from '../user/user.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
@@ -16,7 +15,6 @@ import { BasicAuthModule } from './basic-auth';
     //   secret: config.JWT_SECRET,
     //   signOptions: { expiresIn: config.JWT_EXPIRY },
     // }),
-    FirebaseModule,
     BasicAuthModule,
   ],
   providers: [

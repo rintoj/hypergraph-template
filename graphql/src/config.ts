@@ -23,6 +23,11 @@ export const config = cleanEnv(process.env, {
   JWT_SECRET: str(),
   JWT_EXPIRY: str(),
 
+  DATABASE_URL: str(),
+  DATABASE_TYPE: str(),
+  DB_SYNCHRONIZE: bool({ default: false, devDefault: true }),
+
   FIREBASE_API_KEY: str(),
-  FIREBASE_CREDENTIAL: str(),
+  FIREBASE_SERVICE_ACCOUNT: str(),
+  FIREBASE_STORAGE_BUCKET: str({ default: undefined as any }),
 });

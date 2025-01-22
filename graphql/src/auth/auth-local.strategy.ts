@@ -6,7 +6,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { FirebaseAuthService } from '../firebase/firebase-auth.service';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -26,7 +25,6 @@ export class LocalGuard extends AuthGuard('local') {
   constructor(
     private readonly reflector: Reflector,
     private readonly userService: UserService,
-    private readonly firebaseAuthService: FirebaseAuthService,
   ) {
     super();
   }
@@ -44,11 +42,6 @@ export class LocalGuard extends AuthGuard('local') {
         `A user with this email (${input.email}) does not exist`,
       );
     }
-    const output = await this.firebaseAuthService.signInWithEmail(
-      input.email,
-      input.password,
-    );
-    console.log(output);
     // const authUser = await verifyFirestoreUserWithEmail(
     //   input.email,
     //   input.password,

@@ -1,10 +1,10 @@
+import { RepositoryType, StorageModule } from '@hgraph/storage/nestjs';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { config } from './config';
-import { FirebaseModule } from './firebase/firebase.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -19,7 +19,11 @@ import { UserModule } from './user/user.module';
       installSubscriptionHandlers: false,
       context: ({ req, res }) => ({ req, res }),
     }),
-    FirebaseModule,
+    StorageModule.forRoot({
+      repositoryType: RepositoryType.Firestore,
+      serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,
+      storageBucket: config.FIREBASE_STORAGE_BUCKET, // optional
+    }),
     UserModule,
     AuthModule,
   ],

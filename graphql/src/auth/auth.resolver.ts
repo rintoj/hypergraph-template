@@ -1,8 +1,7 @@
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
-import { createFirestoreUser } from '../firebase/firebase-auth';
-import { User, UserRole, UserStatus } from '../user/user.model';
+import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { CreateUserInput } from './auth.input';
 import { BasicAuthSigninGuard } from './basic-auth/basic-auth.strategy';
@@ -36,20 +35,7 @@ export class AuthResolver {
         `An user with the email address (${input.email}) already exists. Please use a different email address.`,
       );
     }
-    const userRecord = await createFirestoreUser(
-      input.name,
-      input.email,
-      input.password,
-    );
-    return await this.userService.createUser({
-      name: input.name,
-      email: input.email,
-      providerUid: userRecord.uid,
-      isEmailVerified: userRecord.emailVerified,
-      photoURL: userRecord.photoURL,
-      status: userRecord.disabled ? UserStatus.Disabled : UserStatus.Active,
-      roles: [UserRole.User],
-    });
+    return {} as any;
   }
 
   // @UseGuards(LocalGuard)
