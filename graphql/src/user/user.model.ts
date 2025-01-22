@@ -4,7 +4,7 @@ export enum UserRole {
   Admin = 'Admin',
   User = 'User',
 }
-registerEnumType(UserRole, { name: 'AccountRole' });
+registerEnumType(UserRole, { name: 'UserRole' });
 
 export enum UserStatus {
   Active = 'Active',

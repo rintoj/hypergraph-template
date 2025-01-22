@@ -1,5 +1,5 @@
 export interface Auth {
   idToken: string;
-  accountId: string;
+  userId: string;
   roles: string;
 }

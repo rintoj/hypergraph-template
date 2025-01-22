@@ -6,13 +6,13 @@ export type RequestContext = {
   request: Request;
   response: Response;
   idToken?: string;
-  accountId?: string;
+  userId?: string;
   roles?: UserRole[];
 };
 
 type TokenDecoder = (
   token: string,
-) => Promise<Pick<RequestContext, 'idToken' | 'accountId' | 'roles'>>;
+) => Promise<Pick<RequestContext, 'idToken' | 'userId' | 'roles'>>;
 
 function parseToken(req: Request) {
   // read from authorization header
@@ -41,7 +41,7 @@ export function createContext(decodeToken: TokenDecoder | undefined) {
       request,
       response,
       idToken: decodedToken?.idToken,
-      accountId: decodedToken?.accountId,
+      userId: decodedToken?.userId,
       roles: decodedToken?.roles as UserRole[],
     };
   };
