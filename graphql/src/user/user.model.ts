@@ -14,14 +14,17 @@ registerEnumType(UserStatus, { name: 'UserStatus' });
 
 @ObjectType()
 export class User {
-  @Field(() => ID, { nullable: true })
-  id?: string;
+  @Field(() => ID)
+  id!: string;
 
-  @Field({ nullable: true })
-  name?: string;
+  @Field()
+  name!: string;
 
   @Field({ nullable: true })
   email?: string;
+
+  @Field({ nullable: true })
+  phoneNumber?: string;
 
   @Field(() => [UserRole])
   roles!: UserRole[];

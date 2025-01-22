@@ -42,8 +42,9 @@ type Query {
 type User {
   createdAt: DateTime
   email: String
-  id: ID
-  name: String
+  id: ID!
+  name: String!
+  phoneNumber: String
   photoURL: String
   roles: [AccountRole!]!
   updatedAt: DateTime
