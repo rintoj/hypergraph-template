@@ -1,6 +1,7 @@
 import { generateIdOf } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { config } from '../../config';
 import { expirationToSeconds } from '../auth.utils';
@@ -10,10 +11,10 @@ const saltRounds = 10;
 
 @Injectable()
 export class BasicAuthService {
-  jwtService: any;
   constructor(
     @InjectRepo(AuthMetadata)
     private readonly basicAuthRepository: Repository<AuthMetadata>,
+    private readonly jwtService: JwtService,
   ) {}
 
   private async generateHash(password: string): Promise<string> {
@@ -56,19 +57,20 @@ export class BasicAuthService {
     accessToken: string,
     refreshToken: string,
   ) {
+    console.log({ response });
     response.header('Authentication', accessToken);
     response.cookie('Authentication', accessToken, {
       httpOnly: true,
       secure: config.isProd,
-      expires: new Date(Date.now() + expirationToSeconds(config.JWT_EXPIRY)),
+      sameSite: config.isProd ? 'Lax' : 'none',
+      maxAge: expirationToSeconds(config.JWT_EXPIRY) * 1000,
     });
     response.header('Refresh', refreshToken);
     response.cookie('Refresh', refreshToken, {
       httpOnly: true,
       secure: config.isProd,
-      expires: new Date(
-        Date.now() + expirationToSeconds(config.JWT_REFRESH_EXPIRY),
-      ),
+      sameSite: config.isProd ? 'Lax' : 'none',
+      maxAge: expirationToSeconds(config.JWT_REFRESH_EXPIRY) * 1000,
     });
   }
 

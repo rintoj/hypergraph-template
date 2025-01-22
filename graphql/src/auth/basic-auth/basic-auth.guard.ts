@@ -5,8 +5,9 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  getInputFromContext,
   getContextFromExecutionCtx,
+  getInputFromContext,
+  getResponseFromContext,
 } from '../util/guard.util';
 import { LoginWithUsernameInput } from './basic-auth.input';
 import { BasicAuthService } from './basic-auth.service';
@@ -39,7 +40,7 @@ export class BasicAuthSignInGuard extends AuthGuard('basic-auth') {
     const { accessToken, refreshToken } = this.basicAuthService.generateTokens({
       userId: user.id,
     });
-    const response = getContextFromExecutionCtx(context);
+    const response = getResponseFromContext(context);
     this.basicAuthService.attachTokensToResponse(
       response,
       accessToken,

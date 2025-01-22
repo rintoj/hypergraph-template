@@ -21,5 +21,5 @@ export function getResponseFromContext(context: ExecutionContext) {
   if (isGraphQLRequest(context)) {
     return context.getArgByIndex(3).res;
   }
-  return context.getArgByIndex(1)?.res;
+  return context.getArgByIndex(1);
 }
