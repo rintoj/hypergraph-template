@@ -23,7 +23,7 @@ export class AuthMetadata {
   providerType!: string;
 
   @Column({ nullable: true })
-  lastSignInAt: Date;
+  lastSigninAt: Date;
 
   @Column()
   createdAt: Date;

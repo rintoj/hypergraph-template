@@ -33,10 +33,7 @@ export class BasicAuthSigninGuard extends AuthGuard('basic-auth') {
         'Invalid username or password. Please verify your credentials and try again.',
       );
     }
-    const metadata = await this.basicAuthService.saveAuthMetadata(
-      input.username,
-      input.password,
-    );
+    const metadata = await this.basicAuthService.saveSigninData(input.username);
     const request = getRequestContext(context);
     request.user = {
       id: metadata.id,

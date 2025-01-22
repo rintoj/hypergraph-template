@@ -1,12 +1,13 @@
+import { StorageModule } from '@hgraph/storage/nestjs';
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { BasicAuthController } from './basic-auth.controller';
-import { BasicAuthRepository } from './basic-auth.repository';
+import { AuthMetadata } from './basic-auth.model';
 import { BasicAuthResolver } from './basic-auth.resolver';
 import { BasicAuthService } from './basic-auth.service';
 import {
-  BasicAuthSignupGuard,
   BasicAuthSigninGuard,
+  BasicAuthSignupGuard,
 } from './basic-auth.strategy';
 
 @Module({
@@ -15,9 +16,9 @@ import {
       session: true,
       defaultStrategy: 'basic-auth',
     }),
+    StorageModule.forFeature([AuthMetadata]),
   ],
   providers: [
-    BasicAuthRepository,
     BasicAuthService,
     BasicAuthResolver,
     BasicAuthSigninGuard,

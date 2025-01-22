@@ -1,13 +1,17 @@
 import { generateIdOf } from '@hgraph/storage';
+import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { BasicAuthRepository } from './basic-auth.repository';
+import { AuthMetadata } from './basic-auth.model';
 
 const saltRounds = 10;
 
 @Injectable()
 export class BasicAuthService {
-  constructor(private readonly basicAuthRepository: BasicAuthRepository) {}
+  constructor(
+    @InjectRepo(AuthMetadata)
+    private readonly basicAuthRepository: Repository<AuthMetadata>,
+  ) {}
 
   private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(saltRounds);
@@ -40,7 +44,20 @@ export class BasicAuthService {
     return this.comparePassword(password, user.passwordHash);
   }
 
-  async saveAuthMetadata(username: string, password: string) {
+  async saveSigninData(username: string) {
+    const id = generateIdOf(username);
+    return this.basicAuthRepository.update({
+      id,
+      username,
+      lastSigninAt: new Date(),
+    });
+  }
+
+  async saveAuthMetadata(
+    username: string,
+    password: string,
+    lastSigninAt?: Date,
+  ) {
     const passwordHash = await this.hashPassword(password);
     const id = generateIdOf(username);
     return this.basicAuthRepository.save({
@@ -50,6 +67,7 @@ export class BasicAuthService {
       providerId: id,
       providerType: 'basic-auth',
       createdAt: new Date(),
+      lastSigninAt,
     });
   }
 
