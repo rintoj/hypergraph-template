@@ -2,7 +2,8 @@ import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
 import { Auth } from './auth.decorator';
 import { Public } from './auth.guard';
-import { AuthInfo, AuthMetadata } from './auth.model';
+import { AuthInfo } from './auth.model';
+import { SignInResponse, SignUpResponse } from './auth.response';
 import { AuthService } from './auth.service';
 
 @Resolver()
@@ -10,7 +11,7 @@ export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @Mutation(() => AuthMetadata)
+  @Mutation(() => SignInResponse)
   signInWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,
@@ -20,7 +21,7 @@ export class AuthResolver {
   }
 
   @Public()
-  @Mutation(() => AuthMetadata)
+  @Mutation(() => SignUpResponse)
   signUpWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,

@@ -4,8 +4,10 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth';
+import { createLocalStrategy } from './auth/auth.config';
 import { config } from './config';
 import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -29,7 +31,19 @@ import { UserModule } from './user/user.module';
       storageBucket: config.FIREBASE_STORAGE_BUCKET,
     }),
     UserModule,
-    AuthModule,
+    AuthModule.forRoot({
+      strategies: [
+        createLocalStrategy({
+          userService: UserService,
+        }),
+      ],
+      jwtConfig: {
+        secret: config.JWT_SECRET,
+        expiry: config.JWT_EXPIRY,
+        refreshSecret: config.JWT_REFRESH_SECRET,
+        refreshExpiry: config.JWT_REFRESH_EXPIRY,
+      },
+    }),
   ],
   controllers: [AppController],
 })
