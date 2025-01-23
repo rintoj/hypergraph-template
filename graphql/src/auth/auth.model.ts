@@ -27,8 +27,3 @@ export interface AuthInfo {
 }
 
 export type AuthPayload = Omit<AuthInfo, 'authProviderId' | 'authProviderType'>;
-
-export interface AuthInfoWithWithCredentials extends AuthInfo {
-  passwordHash?: string;
-  refreshTokenHash?: string;
-}

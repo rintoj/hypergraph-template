@@ -4,7 +4,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth';
-import { createLocalStrategy } from './auth/auth.config';
+import { createLocalStrategy } from './auth/local';
 import { config } from './config';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';

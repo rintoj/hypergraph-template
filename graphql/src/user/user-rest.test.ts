@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { App } from 'supertest/types';
 import { AuthModule } from '../auth';
-import { createLocalStrategy } from '../auth/auth.config';
 import { Public } from '../auth/auth.guard';
+import { createLocalStrategy } from '../auth/local';
 import { UserModule } from './user.module';
 import { UserService } from './user.service';
 

@@ -1,12 +1,13 @@
 import { generateIdOf } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
+import { AuthInfo } from '../auth/auth.model';
 import {
+  AuthInfoWithWithCredentials,
   LocalStrategyService,
   RefreshTokenCredentials,
   UserCredentials,
-} from '../auth/auth.config';
-import { AuthInfo, AuthInfoWithWithCredentials } from '../auth/auth.model';
+} from '../auth/local';
 import { User, UserStatus } from './user.model';
 
 @Injectable()
