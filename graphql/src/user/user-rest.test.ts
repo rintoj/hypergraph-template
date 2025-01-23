@@ -27,7 +27,7 @@ export class TestController {
   }
 }
 
-describe('Auth', () => {
+describe('Auth with Rest', () => {
   let module: TestingModule;
   let app: INestApplication;
 
