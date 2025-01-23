@@ -1,9 +1,10 @@
 import { config } from '@/config';
 import { generateIdOf } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import type { Response } from 'express';
 import { AuthMetadata } from './auth.model';
 import { expirationToSeconds } from './auth.utils';
 
@@ -26,21 +27,7 @@ export class AuthService {
     return await bcrypt.compare(password, hash);
   }
 
-  private generateProviderId(username: string) {
-    return generateIdOf(username);
-  }
-
-  async findById(id: string) {
-    return this.basicAuthRepository.findById(id);
-  }
-
-  async findByUsername(username: string) {
-    return this.basicAuthRepository.findOne((q) =>
-      q.whereEqualTo('username', username),
-    );
-  }
-
-  generateTokens(payload: any) {
+  private generateTokens(payload: any) {
     const accessToken = this.jwtService.sign(payload, {
       secret: config.JWT_SECRET,
       expiresIn: config.JWT_EXPIRY,
@@ -52,26 +39,31 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  attachTokensToResponse(
-    response: any,
+  private attachTokensToResponse(
+    response: Response,
     accessToken: string,
     refreshToken: string,
   ) {
-    console.log({ response });
     response.header('Authentication', accessToken);
     response.cookie('Authentication', accessToken, {
       httpOnly: true,
       secure: config.isProd,
-      sameSite: config.isProd ? 'Lax' : 'none',
+      sameSite: config.isProd ? 'lax' : 'none',
       maxAge: expirationToSeconds(config.JWT_EXPIRY) * 1000,
     });
     response.header('Refresh', refreshToken);
     response.cookie('Refresh', refreshToken, {
       httpOnly: true,
       secure: config.isProd,
-      sameSite: config.isProd ? 'Lax' : 'none',
+      sameSite: config.isProd ? 'lax' : 'none',
       maxAge: expirationToSeconds(config.JWT_REFRESH_EXPIRY) * 1000,
     });
+  }
+
+  async findByUsername(username: string) {
+    return this.basicAuthRepository.findOne((q) =>
+      q.whereEqualTo('username', username),
+    );
   }
 
   async verifyWithUsername(
@@ -98,32 +90,61 @@ export class AuthService {
     return user;
   }
 
-  async saveSigninData(username: string, refreshToken: string) {
-    const id = generateIdOf(username);
-    return this.basicAuthRepository.update({
-      id,
+  async signInWithUsername(
+    username: string,
+    password: string,
+    response: Response,
+  ) {
+    const existingUser = await this.verifyWithUsername(username, password);
+    if (!existingUser) {
+      throw new BadRequestException(
+        'Invalid username or password. Please verify your credentials and try again.',
+      );
+    }
+    const { accessToken, refreshToken } = this.generateTokens({
+      userId: existingUser.id,
+    });
+    const user = await this.basicAuthRepository.update({
+      id: generateIdOf(username),
       username,
       lastSigninAt: new Date(),
       refreshTokenHash: await this.generateHash(refreshToken),
     });
+    this.attachTokensToResponse(response, accessToken, refreshToken);
+    return {
+      id: user.id,
+      username: user.username,
+      providerType: user.providerType,
+    };
   }
 
-  async saveAuthMetadata(
-    username: string,
-    password: string,
-    lastSigninAt?: Date,
-  ) {
-    const passwordHash = await this.generateHash(password);
+  async signUpWithUsername(username: string, password: string) {
+    const existingUser = await this.findByUsername(username);
+    if (existingUser) {
+      throw new BadRequestException(
+        `The username '${username}' is already in use. Please verify your username or choose a different one.`,
+      );
+    }
     const id = generateIdOf(username);
-    return this.basicAuthRepository.save({
+    const passwordHash = await this.generateHash(password);
+    const user = await this.basicAuthRepository.save({
       id,
       username,
       passwordHash,
       providerId: id,
-      providerType: 'basic-auth',
+      providerType: 'username',
       createdAt: new Date(),
-      lastSigninAt,
     });
+    return {
+      id: user.id,
+      username: user.username,
+      providerType: user.providerType,
+    };
+  }
+
+  async signOut(response: Response) {
+    response.clearCookie('accessToken');
+    response.clearCookie('refreshToken');
   }
 
   async deleteAuthMetadata(username: string) {

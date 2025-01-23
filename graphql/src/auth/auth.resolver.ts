@@ -1,36 +1,40 @@
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
-import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { RequestContext } from '../context';
 import { Public } from './auth-global.guard';
-import { AuthSignInGuard, AuthSignUpGuard } from './auth.guard';
 import { AuthMetadata } from './auth.model';
+import { AuthService } from './auth.service';
 
 @Resolver()
 export class AuthResolver {
+  constructor(private readonly authService: AuthService) {}
+
   @Public()
-  @UseGuards(AuthSignInGuard)
   @Mutation(() => AuthMetadata)
   signInWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,
-    @Context() context: any,
+    @Context() context: RequestContext,
   ) {
-    if (!username || !password) {
-      throw new UnauthorizedException();
-    }
-    return context.user;
+    return this.authService.signInWithUsername(username, password, context.res);
   }
 
   @Public()
-  @UseGuards(AuthSignUpGuard)
   @Mutation(() => AuthMetadata)
   signUpWithUsername(
     @Args('username') username: string,
     @Args('password') password: string,
-    @Context() context: any,
   ) {
-    if (!username || !password) {
-      throw new UnauthorizedException();
-    }
-    return context.user;
+    return this.authService.signUpWithUsername(username, password);
+  }
+
+  @Public()
+  @Query(() => String)
+  public() {
+    return 'public: true';
+  }
+
+  @Query(() => String)
+  protected() {
+    return 'protected: true';
   }
 }

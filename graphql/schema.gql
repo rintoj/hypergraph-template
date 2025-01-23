@@ -20,6 +20,8 @@ type Mutation {
 
 type Query {
   me: User
+  protected: String!
+  public: String!
 }
 
 type User {

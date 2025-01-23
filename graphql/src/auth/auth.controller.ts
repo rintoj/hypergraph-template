@@ -1,21 +1,30 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import { Public } from './auth-global.guard';
-import { AuthSignInGuard, AuthSignUpGuard } from './auth.guard';
+import { LoginWithUsernameInput } from './auth.input';
+import { AuthService } from './auth.service';
+import type { Response } from 'express';
 
 @Controller('/auth')
 export class AuthController {
-  @UseGuards(AuthSignInGuard)
+  constructor(private readonly authService: AuthService) {}
+
   @Public()
   @Post('/signin')
-  async signin(@Req() request: any) {
-    return request.user;
+  async signin(
+    @Res() response: Response,
+    @Body() input: LoginWithUsernameInput,
+  ) {
+    return this.authService.signInWithUsername(
+      input.username,
+      input.password,
+      response,
+    );
   }
 
-  @UseGuards(AuthSignUpGuard)
   @Public()
   @Post('/signup')
-  async signup(@Req() request: any) {
-    return request.user;
+  async signup(@Body() input: LoginWithUsernameInput) {
+    return this.authService.signUpWithUsername(input.username, input.password);
   }
 
   @Public()
