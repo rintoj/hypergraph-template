@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
 import { AuthConfig } from './auth.config';
 import { ACCESS_TOKEN } from './auth.input';
@@ -8,7 +7,6 @@ import { AuthInfo, AuthPayload } from './auth.model';
 import { expirationToSeconds } from './auth.utils';
 import { AuthInfoWithWithCredentials } from './local/local-auth.config';
 
-const saltRounds = 10;
 const isProd = process.env.NODE_ENV === 'production';
 
 @Injectable()
@@ -17,15 +15,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly authConfig: AuthConfig,
   ) {}
-
-  private async generateHash(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(saltRounds);
-    return await bcrypt.hash(password, salt);
-  }
-
-  private async comparePassword(password: string, hash: string) {
-    return await bcrypt.compare(password, hash);
-  }
 
   private sanitizePayload(user: AuthInfo): AuthPayload {
     return {

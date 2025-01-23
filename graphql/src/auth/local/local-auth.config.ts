@@ -34,6 +34,7 @@ export class LocalAuthConfig {
   userService!: ClassType<LocalStrategyService>;
   enableRestAPI?: boolean;
   enableGraphQLAPI?: boolean;
+  hashSaltRounds?: number;
 }
 
 export function createLocalStrategy(

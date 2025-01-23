@@ -8,10 +8,10 @@ import {
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
 import { AuthService } from '../auth.service';
-import { LocalStrategyService } from './local-auth.config';
+import { LocalAuthConfig, LocalStrategyService } from './local-auth.config';
 import { SignInResponse, SignUpResponse } from './local-auth.response';
 
-const saltRounds = 10;
+const DEFAULT_HASH_SALT_ROUNDS = 10;
 
 @Injectable()
 export class LocalAuthService {
@@ -19,10 +19,13 @@ export class LocalAuthService {
     @Inject('LocalStrategyService')
     private readonly localStrategyService: LocalStrategyService,
     private readonly authService: AuthService,
+    private readonly config: LocalAuthConfig,
   ) {}
 
   private async generateHash(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(saltRounds);
+    const salt = await bcrypt.genSalt(
+      this.config.hashSaltRounds || DEFAULT_HASH_SALT_ROUNDS,
+    );
     return await bcrypt.hash(password, salt);
   }
 

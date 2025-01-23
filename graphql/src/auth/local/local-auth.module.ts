@@ -14,7 +14,7 @@ export class LocalAuthModule {
       imports: [AuthModule],
       providers: toNonNullArray([
         LocalAuthService,
-        config.enableRestAPI !== false ? LocalAuthResolver : undefined,
+        config.enableGraphQLAPI !== false ? LocalAuthResolver : undefined,
         { provide: LocalAuthConfig, useValue: config },
         { provide: 'LocalStrategyService', useClass: config.userService },
       ]),
