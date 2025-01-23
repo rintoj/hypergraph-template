@@ -7,8 +7,6 @@ import { AuthInfo, AuthPayload } from './auth.model';
 import { expirationToSeconds } from './auth.utils';
 import { AuthInfoWithWithCredentials } from './local/local-auth.config';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -40,9 +38,10 @@ export class AuthService {
     response.header(ACCESS_TOKEN, accessToken);
     response.cookie(ACCESS_TOKEN, accessToken, {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'lax' : 'none',
+      secure: true,
+      sameSite: 'none',
       maxAge: expirationToSeconds(this.authConfig.jwtConfig.expiry) * 1000,
+      ...(this.authConfig.cookieConfig ?? {}),
     });
   }
 

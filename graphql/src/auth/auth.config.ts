@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CookieOptions } from 'express';
 import { LocalAuthConfig } from './local';
 
 export enum AuthStrategyType {
@@ -18,4 +19,5 @@ export interface AuthJwtConfig {
 export class AuthConfig {
   strategies: AuthStrategies[];
   jwtConfig: AuthJwtConfig;
+  cookieConfig?: Omit<CookieOptions, 'encode'>;
 }
