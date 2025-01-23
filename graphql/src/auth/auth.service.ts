@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
 import { ACCESS_TOKEN } from './auth.input';
-import { AuthMetadata } from './auth.model';
+import { AuthInfo, AuthMetadata, Role } from './auth.model';
 import { expirationToSeconds } from './auth.utils';
 
 const saltRounds = 10;
@@ -93,6 +93,9 @@ export class AuthService {
     }
     const { accessToken, refreshToken } = this.generateTokens({
       userId: existingUser.id,
+      username: existingUser.username,
+      roles: existingUser.roles,
+      providerType: existingUser.providerType,
     });
     const user = await this.basicAuthRepository.update({
       id: generateIdOf(username),
@@ -108,7 +111,10 @@ export class AuthService {
     };
   }
 
-  async signUpWithUsername(username: string, password: string) {
+  async signUpWithUsername(
+    username: string,
+    password: string,
+  ): Promise<AuthInfo> {
     const existingUser = await this.findByUsername(username);
     if (existingUser) {
       throw new BadRequestException(
@@ -122,12 +128,14 @@ export class AuthService {
       username,
       passwordHash,
       providerId: id,
+      roles: [Role.User],
       providerType: 'username',
       createdAt: new Date(),
     });
     return {
-      id: user.id,
+      userId: user.id,
       username: user.username,
+      roles: user.roles,
       providerType: user.providerType,
     };
   }

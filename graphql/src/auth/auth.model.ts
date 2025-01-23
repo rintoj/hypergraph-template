@@ -1,6 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
+export enum Role {
+  Admin = 'admin',
+  User = 'user',
+}
+
 @Entity()
 @ObjectType()
 export class AuthMetadata {
@@ -28,6 +33,15 @@ export class AuthMetadata {
   @Column({ nullable: true })
   refreshTokenHash?: string;
 
+  @Column({
+    type: 'enum',
+    enum: Role,
+    array: true,
+    default: [],
+    nullable: true,
+  })
+  roles?: Role[];
+
   @Column()
   createdAt: Date;
 
@@ -37,5 +51,7 @@ export class AuthMetadata {
 
 export interface AuthInfo {
   userId: string;
-  roles: string;
+  username: string;
+  roles: Role[];
+  providerType: string;
 }

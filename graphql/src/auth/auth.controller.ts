@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
 import type { Response } from 'express';
+import { Auth } from './auth.decorator';
 import { Public } from './auth.guard';
 import { LoginWithUsernameInput } from './auth.input';
+import { AuthInfo } from './auth.model';
 import { AuthService } from './auth.service';
-import { Auth } from './auth.decorator';
 
 @Controller('/auth')
 export class AuthController {
@@ -30,10 +31,9 @@ export class AuthController {
     return this.authService.signUpWithUsername(input.username, input.password);
   }
 
-  @Public()
-  @Get('/signout')
-  async signout(@Res() response: Response) {
-    await this.authService.signOut(response);
+  @Post('/signout')
+  async signout(@Res() response: Response, @Auth() auth?: AuthInfo) {
+    await this.authService.signOut(response, auth?.userId);
     return response.json({ user: null });
   }
 

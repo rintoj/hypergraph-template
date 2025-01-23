@@ -19,6 +19,10 @@ import { UserModule } from './user/user.module';
       installSubscriptionHandlers: false,
       context: ({ req, res }) => ({ req, res }),
     }),
+    // StorageModule.forRoot({
+    //   repositoryType: RepositoryType.TypeORM,
+    //   url: config.DATABASE_URL,
+    // }),
     StorageModule.forRoot({
       repositoryType: RepositoryType.Firestore,
       serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,

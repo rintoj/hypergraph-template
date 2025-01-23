@@ -8,7 +8,7 @@ export function getContextFromExecutionCtx(context: ExecutionContext) {
   if (context.getType<ContextType | 'graphql'>() === 'graphql') {
     return context.getArgByIndex(2);
   }
-  return context.getArgByIndex(1)?.req;
+  return context.getArgByIndex(0);
 }
 
 export const Auth = createParamDecorator(
