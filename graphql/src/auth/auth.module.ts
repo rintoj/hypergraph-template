@@ -13,10 +13,11 @@ import { AuthStrategy } from './auth.strategy';
 @Module({
   imports: [
     PassportModule.register({
-      session: true,
       defaultStrategy: 'jwt',
+      global: true,
     }),
     JwtModule.register({
+      global: true,
       secret: config.JWT_SECRET,
       signOptions: { expiresIn: config.JWT_EXPIRY },
     }),
