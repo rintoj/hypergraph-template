@@ -21,7 +21,6 @@ export class AuthController {
       input.password,
       response,
     );
-    console.log({ user });
     return response.json(user);
   }
 

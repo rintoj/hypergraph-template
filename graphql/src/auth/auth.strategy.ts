@@ -1,5 +1,5 @@
 import { config } from '@/config';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { parse } from 'cookie';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -24,8 +24,10 @@ export class AuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  validate(data, verified, a, b) {
-    console.log('AuthStrategy: verify =>', { data, verified, a, b });
-    verified(null, data);
+  validate(data, verified) {
+    if (data.userId) {
+      verified(null, data);
+    }
+    return verified(new UnauthorizedException());
   }
 }

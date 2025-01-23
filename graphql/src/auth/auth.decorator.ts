@@ -14,6 +14,6 @@ export function getContextFromExecutionCtx(context: ExecutionContext) {
 export const Auth = createParamDecorator(
   (data: unknown, executionContext: ExecutionContext) => {
     const req = getContextFromExecutionCtx(executionContext);
-    return req.user;
+    return req.auth ?? req.user;
   },
 );
