@@ -21,15 +21,15 @@ import { UserService } from './user/user.service';
       installSubscriptionHandlers: false,
       context: ({ req, res }) => ({ req, res }),
     }),
-    // StorageModule.forRoot({
-    //   repositoryType: RepositoryType.TypeORM,
-    //   url: config.DATABASE_URL,
-    // }),
     StorageModule.forRoot({
-      repositoryType: RepositoryType.Firestore,
-      serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,
-      storageBucket: config.FIREBASE_STORAGE_BUCKET,
+      repositoryType: RepositoryType.TypeORM,
+      url: config.DATABASE_URL,
     }),
+    // StorageModule.forRoot({
+    //   repositoryType: RepositoryType.Firestore,
+    //   serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,
+    //   storageBucket: config.FIREBASE_STORAGE_BUCKET,
+    // }),
     UserModule,
     AuthModule.forRoot({
       strategies: [
