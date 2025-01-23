@@ -3,12 +3,12 @@ import { StorageModule } from '@hgraph/storage/nestjs';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthStrategy } from './auth-global.strategy';
 import { AuthController } from './auth.controller';
 import { GlobalAuthGuard } from './auth.guard';
 import { AuthMetadata } from './auth.model';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
+import { AuthStrategy } from './auth.strategy';
 
 @Module({
   imports: [
