@@ -1,12 +1,13 @@
+import { RepositoryType, StorageModule } from '@hgraph/storage/nestjs';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
-import { AuthGuardProvider } from './auth/auth.guard';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth';
+import { createLocalStrategy } from './auth/local';
 import { config } from './config';
-import { FirestoreProviderModule } from './firebase/firebase.module';
+import { UserModule } from './user/user.module';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -20,11 +21,30 @@ import { FirestoreProviderModule } from './firebase/firebase.module';
       installSubscriptionHandlers: false,
       context: ({ req, res }) => ({ req, res }),
     }),
-    FirestoreProviderModule,
+    StorageModule.forRoot({
+      repositoryType: RepositoryType.TypeORM,
+      url: config.DATABASE_URL,
+    }),
+    // StorageModule.forRoot({
+    //   repositoryType: RepositoryType.Firestore,
+    //   serviceAccountConfig: config.FIREBASE_SERVICE_ACCOUNT,
+    //   storageBucket: config.FIREBASE_STORAGE_BUCKET,
+    // }),
     UserModule,
-    AuthModule,
+    AuthModule.forRoot({
+      strategies: [
+        createLocalStrategy({
+          userService: UserService,
+        }),
+      ],
+      jwtConfig: {
+        secret: config.JWT_SECRET,
+        expiry: config.JWT_EXPIRY,
+        refreshSecret: config.JWT_REFRESH_SECRET,
+        refreshExpiry: config.JWT_REFRESH_EXPIRY,
+      },
+    }),
   ],
   controllers: [AppController],
-  providers: [AuthGuardProvider],
 })
 export class AppModule {}

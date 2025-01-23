@@ -1,34 +1,47 @@
 import {
-  CanActivate,
   ExecutionContext,
   Injectable,
   SetMetadata,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { APP_GUARD, Reflector } from '@nestjs/core';
-import { RequestContext } from '../context';
-import { UserRole } from '../user/user.model';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { AuthGuard } from '@nestjs/passport';
+import { getContextFromExecutionCtx } from './auth.decorator';
 
-export const ROLES_KEY = 'roles';
-export const Authorized = (...roles: UserRole[]) =>
-  SetMetadata(ROLES_KEY, roles);
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private readonly reflector: Reflector) {
+    super();
+  }
 
-  canActivate(executionContext: ExecutionContext): boolean {
-    const roles = this.reflector.get<UserRole[]>(
-      ROLES_KEY,
-      executionContext.getHandler(),
-    );
-    if (!roles) return true;
-    const context: RequestContext = executionContext.getArgByIndex(2);
-    if (!context.accountId || !context.roles) {
-      return false;
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+
+  canActivate(context: ExecutionContext) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
     }
-    if (!roles.length) return context.roles.includes(UserRole.User);
-    return roles.some((role) => context.roles.includes(role));
+    return super.canActivate(context);
+  }
+
+  handleRequest(err, auth, info, executionContext) {
+    if (err || !auth) {
+      throw err || new UnauthorizedException();
+    }
+    const context = getContextFromExecutionCtx(executionContext);
+    context.auth = auth;
+    return auth;
   }
 }
 
-export const AuthGuardProvider = { provide: APP_GUARD, useClass: AuthGuard };
+export const GlobalAuthGuard = { provide: APP_GUARD, useClass: JwtAuthGuard };

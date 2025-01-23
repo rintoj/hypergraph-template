@@ -106,15 +106,15 @@ NestJS applications follow a well-defined folder structure that promotes code or
 
 ```
 src
-├── account  // Feature module for managing accounts
-│   ├── account.model.ts
-│   ├── account.resolver.ts
-│   ├── account.input.ts (if needed)
-│   ├── account.module.ts
-│   ├── account.service.ts
-│   └── account.repository.ts
+├── user  // Feature module for managing users
+│   ├── user.model.ts
+│   ├── user.resolver.ts
+│   ├── user.input.ts (if needed)
+│   ├── user.module.ts
+│   ├── user.service.ts
+│   └── user.repository.ts
 ├── auth  // Feature module for authentication
-│   ├── ... (similar structure as account)
+│   ├── ... (similar structure as user)
 ├── ... other feature modules
 ├── app.controller.ts (optional)
 ├── app.module.ts
@@ -122,7 +122,7 @@ src
 └── main.ts
 ```
 
-- **Feature Modules:** Each feature (e.g., account, auth, project) has its dedicated directory containing related files like models, resolvers, services, and repositories. This promotes modularity and separation of concerns.
+- **Feature Modules:** Each feature (e.g., user, auth, project) has its dedicated directory containing related files like models, resolvers, services, and repositories. This promotes modularity and separation of concerns.
 - **Models:** Data models (`*.model.ts`) represent the structure of your data using TypeScript classes. They are annotated with `@ObjectType` from `@nestjs/graphql` and use appropriate GraphQL scalar types (`String`, `Int`, `Float`, `Boolean`, `ID`) and custom types (e.g., `Date`, `DateTime`).
 - **Resolvers:** Resolvers (`*.resolver.ts`) handle incoming GraphQL queries and mutations. They are decorated with `@Query()`, `@Mutation()`, and `@Resolver()` and use dependency injection to access services.
 - **Input Types:** Input types (`*.input.ts`) define the expected data structure for mutations. They are annotated with `@InputType()` and use similar field type conventions as models.
@@ -134,7 +134,7 @@ src
 
 Consistent naming conventions improve code readability and maintainability. Here are some recommended conventions:
 
-- **Modules:** Feature modules should be named after the feature they represent (e.g., `AccountModule`, `AuthModule`).
+- **Modules:** Feature modules should be named after the feature they represent (e.g., `UserModule`, `AuthModule`).
 - **Models:** Model classes should use PascalCase (e.g., `User`, `Product`).
 - **Resolvers:** Resolver classes should use PascalCase with the suffix `Resolver` (e.g., `UserResolver`, `PostResolver`).
 - **Input Types:** Input types should use PascalCase with the suffix `Input` (e.g., `CreateUserInput`, `UpdatePostInput`).
@@ -274,7 +274,7 @@ export class UserService {
 
   async findAll(context: RequestContext): Promise<User[]> {
     return this.userRepository.findAll((query) =>
-      query.whereEqualTo('accountId', context.accountId),
+      query.whereEqualTo('userId', context.userId),
     );
   }
 
@@ -283,7 +283,7 @@ export class UserService {
     context: RequestContext,
   ): Promise<User | undefined> {
     const user = await this.userRepository.findById(id);
-    if (!user || user.accountId !== context.accountId) return undefined;
+    if (!user || user.userId !== context.userId) return undefined;
     return user;
   }
 
@@ -291,7 +291,7 @@ export class UserService {
     input: CreateUserInput,
     context: RequestContext,
   ): Promise<User> {
-    return this.userRepository.save({ ...input, accountId: context.accountId });
+    return this.userRepository.save({ ...input, userId: context.userId });
   }
 
   async updateUser(
@@ -356,7 +356,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { AccountModule } from './account/account.module';
+import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
 import { AuthGuardProvider } from './auth/auth.guard';
 import { AuthModule } from './auth/auth.module';
@@ -382,7 +382,7 @@ import { UserModule } from './user/user.module'; // Import the new module
       envFilePath:
         process.env.NODE_ENV !== 'production' ? '.env.local' : '.env',
     }),
-    AccountModule,
+    UserModule,
     AuthModule,
     FirestoreModule,
     UserModule, // Add the new module to the imports

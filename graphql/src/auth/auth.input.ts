@@ -1,22 +1,2 @@
-import { Field, InputType } from '@nestjs/graphql';
-
-@InputType()
-export class CreateAccountInput {
-  @Field()
-  name!: string;
-
-  @Field()
-  email!: string;
-
-  @Field()
-  password!: string;
-}
-
-@InputType()
-export class LoginWithEmailInput {
-  @Field()
-  email!: string;
-
-  @Field()
-  password!: string;
-}
+export const ACCESS_TOKEN = 'access_token';
+export const REFRESH_TOKEN = 'refresh_token';

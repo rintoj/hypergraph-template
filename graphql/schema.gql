@@ -2,41 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-enum AccountRole {
-  Admin
-  User
-}
-
-input CreateAccountInput {
-  email: String!
-  name: String!
-  password: String!
-}
-
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
-type LoginResponse {
-  account: User!
-  id: ID!
-  token: String!
-}
-
-input LoginWithEmailInput {
-  email: String!
-  password: String!
-}
-
 type Mutation {
-  createAccount(input: CreateAccountInput!): User!
-  loginWithEmail(input: LoginWithEmailInput!): LoginResponse!
-  logout: Boolean!
+  signInWithUsername(password: String!, username: String!): SignInResponse!
+  signOut: Boolean!
+  signUpWithUsername(password: String!, username: String!): SignUpResponse!
 }
 
 type Query {
   me: User
+  protected: String!
+  public: String!
+}
+
+type SignInResponse {
+  accessToken: String!
+  userId: String!
+}
+
+type SignUpResponse {
+  userId: String!
 }
 
 type User {
@@ -44,8 +33,12 @@ type User {
   email: String
   id: ID!
   name: String!
-  phoneNumber: String
   photoURL: String
-  roles: [AccountRole!]!
+  roles: [UserRole!]!
   updatedAt: DateTime
+}
+
+enum UserRole {
+  Admin
+  User
 }
