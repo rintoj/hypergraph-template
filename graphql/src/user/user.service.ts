@@ -12,10 +12,10 @@ import { User, UserStatus } from './user.model';
 @Injectable()
 export class UserService implements LocalStrategyService {
   constructor(
-    @InjectRepo(User) private readonly userRepository: Repository<User>,
+    @InjectRepo(User) protected readonly userRepository: Repository<User>,
   ) {}
 
-  private toAuthInfo(user: User): AuthInfo {
+  protected toAuthInfo(user: User): AuthInfo {
     return {
       userId: user.id,
       username: user.email,
@@ -25,7 +25,7 @@ export class UserService implements LocalStrategyService {
     };
   }
 
-  private toAuthInfoWithCredentials(user: User): AuthInfoWithWithCredentials {
+  protected toAuthInfoWithCredentials(user: User): AuthInfoWithWithCredentials {
     return {
       ...this.toAuthInfo(user),
       passwordHash: user.passwordHash,
@@ -33,7 +33,7 @@ export class UserService implements LocalStrategyService {
     };
   }
 
-  private generateId(username: string) {
+  protected generateId(username: string) {
     return generateIdOf('email:' + username.toLocaleLowerCase().trim());
   }
 
