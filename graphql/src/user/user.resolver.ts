@@ -1,4 +1,4 @@
-import { CurrentUser } from '@/auth';
+import { Auth } from '@/auth';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Query, Resolver } from '@nestjs/graphql';
 import { User } from './user.model';
@@ -8,7 +8,7 @@ export class UserResolver {
   constructor(@InjectRepo(User) private userRepository: Repository<User>) {}
 
   @Query(() => User, { nullable: true })
-  me(@CurrentUser() user: any) {
+  me(@Auth() user: any) {
     console.log(user);
     return this.userRepository.findById(user?.id);
   }

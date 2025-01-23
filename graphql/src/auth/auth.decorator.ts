@@ -11,7 +11,7 @@ export function getContextFromExecutionCtx(context: ExecutionContext) {
   return context.getArgByIndex(1)?.req;
 }
 
-export const CurrentUser = createParamDecorator(
+export const Auth = createParamDecorator(
   (data: unknown, executionContext: ExecutionContext) => {
     const req = getContextFromExecutionCtx(executionContext);
     return req.user;

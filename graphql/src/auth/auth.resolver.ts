@@ -1,7 +1,8 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
+import { Auth } from './auth.decorator';
 import { Public } from './auth.guard';
-import { AuthMetadata } from './auth.model';
+import { AuthInfo, AuthMetadata } from './auth.model';
 import { AuthService } from './auth.service';
 
 @Resolver()
@@ -25,6 +26,13 @@ export class AuthResolver {
     @Args('password') password: string,
   ) {
     return this.authService.signUpWithUsername(username, password);
+  }
+
+  @Public()
+  @Mutation(() => Boolean)
+  async signOut(@Context() context: RequestContext, @Auth() auth?: AuthInfo) {
+    await this.authService.signOut(context.res, auth?.userId);
+    return true;
   }
 
   @Public()

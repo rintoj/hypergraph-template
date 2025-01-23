@@ -33,13 +33,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user, info) {
-    console.log({ err, user, info });
-    if (err || !user) {
-      throw err || new UnauthorizedException();
-    }
-    return user;
-  }
+  // handleRequest(err, user, info) {
+  //   console.log({ err, user, info });
+  //   if (err || !user) {
+  //     throw err || new UnauthorizedException();
+  //   }
+  //   return user;
+  // }
 }
 
 export const GlobalAuthGuard = { provide: APP_GUARD, useClass: JwtAuthGuard };

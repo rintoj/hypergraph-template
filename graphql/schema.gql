@@ -15,6 +15,7 @@ scalar DateTime
 
 type Mutation {
   signInWithUsername(password: String!, username: String!): AuthMetadata!
+  signOut: Boolean!
   signUpWithUsername(password: String!, username: String!): AuthMetadata!
 }
 

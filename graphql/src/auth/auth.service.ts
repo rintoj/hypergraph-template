@@ -64,7 +64,7 @@ export class AuthService {
       q.whereEqualTo('username', username),
     );
     if (!user?.passwordHash) return;
-    if (!this.comparePassword(password, user.passwordHash)) return;
+    if (!(await this.comparePassword(password, user.passwordHash))) return;
     return user;
   }
 
@@ -132,9 +132,14 @@ export class AuthService {
     };
   }
 
-  async signOut(response: Response) {
-    response.clearCookie('access_token');
-    response.clearCookie('refreshToken');
+  async signOut(response: Response, userId: string) {
+    if (userId) {
+      await this.basicAuthRepository.update({
+        id: userId,
+        refreshTokenHash: null,
+      });
+    }
+    response.clearCookie(ACCESS_TOKEN);
   }
 
   async deleteAuthMetadata(username: string) {

@@ -1,8 +1,9 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { Public } from './auth.guard';
 import { LoginWithUsernameInput } from './auth.input';
 import { AuthService } from './auth.service';
-import type { Response } from 'express';
+import { Auth } from './auth.decorator';
 
 @Controller('/auth')
 export class AuthController {
@@ -14,11 +15,13 @@ export class AuthController {
     @Res() response: Response,
     @Body() input: LoginWithUsernameInput,
   ) {
-    return this.authService.signInWithUsername(
+    const user = await this.authService.signInWithUsername(
       input.username,
       input.password,
       response,
     );
+    console.log({ user });
+    return response.json(user);
   }
 
   @Public()
@@ -28,13 +31,20 @@ export class AuthController {
   }
 
   @Public()
+  @Get('/signout')
+  async signout(@Res() response: Response) {
+    await this.authService.signOut(response);
+    return response.json({ user: null });
+  }
+
+  @Public()
   @Get('/public')
   async public() {
     return { public: true };
   }
 
   @Get('/protected')
-  async protected() {
-    return { protected: true };
+  async protected(@Auth() user: any) {
+    return user;
   }
 }

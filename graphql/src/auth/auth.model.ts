@@ -34,3 +34,8 @@ export class AuthMetadata {
   @Column({ nullable: true })
   updatedAt?: Date;
 }
+
+export interface AuthInfo {
+  userId: string;
+  roles: string;
+}
