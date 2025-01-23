@@ -1,6 +1,6 @@
+import { CurrentUser } from '@/auth';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Query, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { User } from './user.model';
 
 @Resolver()
