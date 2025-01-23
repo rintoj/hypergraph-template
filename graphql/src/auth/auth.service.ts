@@ -5,6 +5,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
+import { ACCESS_TOKEN } from './auth.input';
 import { AuthMetadata } from './auth.model';
 import { expirationToSeconds } from './auth.utils';
 
@@ -39,24 +40,13 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  private attachTokensToResponse(
-    response: Response,
-    accessToken: string,
-    refreshToken: string,
-  ) {
-    response.header('access_token', accessToken);
-    response.cookie('access_token', accessToken, {
+  private attachTokensToResponse(response: Response, accessToken: string) {
+    response.header(ACCESS_TOKEN, accessToken);
+    response.cookie(ACCESS_TOKEN, accessToken, {
       httpOnly: true,
       secure: config.isProd,
       sameSite: config.isProd ? 'lax' : 'none',
       maxAge: expirationToSeconds(config.JWT_EXPIRY) * 1000,
-    });
-    response.header('Refresh', refreshToken);
-    response.cookie('Refresh', refreshToken, {
-      httpOnly: true,
-      secure: config.isProd,
-      sameSite: config.isProd ? 'lax' : 'none',
-      maxAge: expirationToSeconds(config.JWT_REFRESH_EXPIRY) * 1000,
     });
   }
 
@@ -110,7 +100,7 @@ export class AuthService {
       lastSigninAt: new Date(),
       refreshTokenHash: await this.generateHash(refreshToken),
     });
-    this.attachTokensToResponse(response, accessToken, refreshToken);
+    this.attachTokensToResponse(response, accessToken);
     return {
       id: user.id,
       username: user.username,
