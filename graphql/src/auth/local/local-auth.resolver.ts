@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../../context';
 import { Auth } from '../auth.decorator';
 import { Public } from '../auth.guard';
@@ -38,16 +38,5 @@ export class LocalAuthResolver {
   async signOut(@Context() context: RequestContext, @Auth() auth?: AuthInfo) {
     await this.localAuthService.signOut(context.res, auth?.userId);
     return true;
-  }
-
-  @Public()
-  @Query(() => String)
-  public() {
-    return 'public: true';
-  }
-
-  @Query(() => String)
-  protected() {
-    return 'protected: true';
   }
 }
