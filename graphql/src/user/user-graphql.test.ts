@@ -1,7 +1,13 @@
 import { RepositoryType, StorageModule } from '@hgraph/storage/nestjs';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Controller, INestApplication } from '@nestjs/common';
-import { Field, GraphQLModule, ObjectType, Query } from '@nestjs/graphql';
+import { INestApplication } from '@nestjs/common';
+import {
+  Field,
+  GraphQLModule,
+  ObjectType,
+  Query,
+  Resolver,
+} from '@nestjs/graphql';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { App } from 'supertest/types';
@@ -21,7 +27,7 @@ export class TestResult {
   public: boolean;
 }
 
-@Controller()
+@Resolver()
 export class TestResolver {
   @Query(() => TestResult)
   protectedData() {
