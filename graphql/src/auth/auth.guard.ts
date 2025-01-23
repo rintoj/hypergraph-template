@@ -4,7 +4,7 @@ import {
   SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
+import { APP_GUARD, Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
 export const IS_PUBLIC_KEY = 'isPublic';
@@ -36,3 +36,5 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return user;
   }
 }
+
+export const GlobalAuthGuard = { provide: APP_GUARD, useClass: JwtAuthGuard };

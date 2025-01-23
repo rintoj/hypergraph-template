@@ -44,8 +44,8 @@ export class AuthService {
     accessToken: string,
     refreshToken: string,
   ) {
-    response.header('Authentication', accessToken);
-    response.cookie('Authentication', accessToken, {
+    response.header('access_token', accessToken);
+    response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: config.isProd,
       sameSite: config.isProd ? 'lax' : 'none',
@@ -143,7 +143,7 @@ export class AuthService {
   }
 
   async signOut(response: Response) {
-    response.clearCookie('accessToken');
+    response.clearCookie('access_token');
     response.clearCookie('refreshToken');
   }
 

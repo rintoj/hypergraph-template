@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Res } from '@nestjs/common';
-import { Public } from './auth-global.guard';
+import { Public } from './auth.guard';
 import { LoginWithUsernameInput } from './auth.input';
 import { AuthService } from './auth.service';
 import type { Response } from 'express';

@@ -1,6 +1,6 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { RequestContext } from '../context';
-import { Public } from './auth-global.guard';
+import { Public } from './auth.guard';
 import { AuthMetadata } from './auth.model';
 import { AuthService } from './auth.service';
 

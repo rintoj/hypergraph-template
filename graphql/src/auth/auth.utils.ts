@@ -1,9 +1,3 @@
-import { hkdf } from '@panva/hkdf';
-
-export async function generateKey(secret: string) {
-  return await hkdf('sha256', secret, '', 'AUTH_TOKEN_ENCRYPTION', 32);
-}
-
 export function expirationToSeconds(expiry: string) {
   let seconds = 0;
   const timeRegex = /^(\d+)([d|h|m|s])$/;
