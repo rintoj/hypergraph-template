@@ -41,6 +41,7 @@ export class UserService implements LocalStrategyService {
     const user = await this.userRepository.findOne((q) =>
       q.whereEqualTo('email', username),
     );
+    if (!user) return;
     return this.toAuthInfoWithCredentials(user);
   }
 

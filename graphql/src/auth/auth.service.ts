@@ -1,21 +1,27 @@
-import { config } from '@/config';
 import { generateIdOf } from '@hgraph/storage';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
-import { LocalStrategyService } from './auth.config';
+import { AuthConfig, LocalStrategyService } from './auth.config';
 import { ACCESS_TOKEN } from './auth.input';
 import { AuthInfo, AuthPayload } from './auth.model';
 import { SignInResponse, SignUpResponse } from './auth.response';
 import { expirationToSeconds } from './auth.utils';
 
 const saltRounds = 10;
+const isProd = process.env.NODE_ENV === 'production';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly authConfig: AuthConfig,
     @Inject('LocalStrategyService')
     private readonly localStrategyService: LocalStrategyService,
   ) {}
@@ -31,12 +37,12 @@ export class AuthService {
 
   private generateTokens(payload: any) {
     const accessToken = this.jwtService.sign(payload, {
-      secret: config.JWT_SECRET,
-      expiresIn: config.JWT_EXPIRY,
+      secret: this.authConfig.jwtConfig.secret,
+      expiresIn: this.authConfig.jwtConfig.expiry,
     });
     const refreshToken = this.jwtService.sign(payload, {
-      secret: config.JWT_REFRESH_SECRET,
-      expiresIn: config.JWT_REFRESH_EXPIRY,
+      secret: this.authConfig.jwtConfig.refreshSecret,
+      expiresIn: this.authConfig.jwtConfig.refreshExpiry,
     });
     return { accessToken, refreshToken };
   }
@@ -45,9 +51,9 @@ export class AuthService {
     response.header(ACCESS_TOKEN, accessToken);
     response.cookie(ACCESS_TOKEN, accessToken, {
       httpOnly: true,
-      secure: config.isProd,
-      sameSite: config.isProd ? 'lax' : 'none',
-      maxAge: expirationToSeconds(config.JWT_EXPIRY) * 1000,
+      secure: isProd,
+      sameSite: isProd ? 'lax' : 'none',
+      maxAge: expirationToSeconds(this.authConfig.jwtConfig.expiry) * 1000,
     });
   }
 
@@ -80,7 +86,7 @@ export class AuthService {
   ): Promise<SignInResponse> {
     const existingUser = await this.verifyWithUsername(username, password);
     if (!existingUser) {
-      throw new BadRequestException(
+      throw new UnauthorizedException(
         'Invalid username or password. Please verify your credentials and try again.',
       );
     }

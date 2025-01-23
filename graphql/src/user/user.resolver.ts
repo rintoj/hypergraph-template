@@ -1,6 +1,6 @@
-import { Auth } from '@/auth';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Query, Resolver } from '@nestjs/graphql';
+import { Auth } from '../auth';
 import { AuthInfo } from '../auth/auth.model';
 import { User } from './user.model';
 

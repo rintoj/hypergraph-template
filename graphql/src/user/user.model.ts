@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { AuthMetadata } from '../auth/auth.model';
 
 export enum UserRole {
@@ -18,7 +18,7 @@ registerEnumType(UserStatus, { name: 'UserStatus' });
 @Entity()
 export class User extends AuthMetadata {
   @Field(() => ID)
-  @Column({ nullable: true })
+  @PrimaryColumn()
   id!: string;
 
   @Field()
