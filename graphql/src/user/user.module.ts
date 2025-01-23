@@ -1,9 +1,12 @@
+import { StorageModule } from '@hgraph/storage/nestjs';
 import { Module } from '@nestjs/common';
-import { UserRepository } from './user.repository';
+import { User } from './user.model';
+import { UserResolver } from './user.resolver';
 import { UserService } from './user.service';
 
 @Module({
-  providers: [UserService, UserRepository],
+  imports: [StorageModule.forFeature([User])],
+  providers: [UserService, UserResolver],
   exports: [UserService],
 })
 export class UserModule {}

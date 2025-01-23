@@ -31,7 +31,6 @@ import { LocalAuthStrategy } from './auth.strategy';
     AuthSignUpGuard,
     LocalAuthStrategy,
   ],
-  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

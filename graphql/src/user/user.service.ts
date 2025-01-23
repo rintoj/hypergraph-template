@@ -1,11 +1,13 @@
 import { generateIdOf } from '@hgraph/storage';
+import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
 import { User } from './user.model';
-import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @InjectRepo(User) private readonly userRepository: Repository<User>,
+  ) {}
 
   generateUserId(user: Pick<User, 'email' | 'phoneNumber'>) {
     if (user.email) {
