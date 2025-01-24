@@ -5,7 +5,6 @@ export class SupabaseAuthConfig {
   public supabaseUrl;
   public supabaseAnonKey;
   public enableRestAPI?: boolean;
-  public enableGraphQLAPI?: boolean;
 }
 
 export function createSupabaseAuthStrategy(

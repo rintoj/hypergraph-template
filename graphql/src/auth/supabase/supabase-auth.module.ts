@@ -3,7 +3,6 @@ import { toNonNullArray } from 'tsds-tools';
 import { AuthModule } from '../auth.module';
 import { SupabaseAuthConfig } from './supabase-auth.config';
 import { SupabaseAuthController } from './supabase-auth.controller';
-import { SupabaseAuthResolver } from './supabase-auth-resolver';
 import { SupabaseAuthService } from './supabase-auth.service';
 
 @Module({})
@@ -15,7 +14,6 @@ export class SupabaseAuthModule {
       providers: toNonNullArray([
         SupabaseAuthConfig,
         SupabaseAuthService,
-        config.enableGraphQLAPI !== false ? SupabaseAuthResolver : undefined,
         { provide: SupabaseAuthConfig, useValue: config },
       ]),
       controllers: toNonNullArray([
