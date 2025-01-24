@@ -32,4 +32,5 @@ export const config = cleanEnv(process.env, {
 
   SUPABASE_URL: str(),
   SUPABASE_ANON_KEY: str(),
+  AUTH_REDIRECT_URL: str(),
 });

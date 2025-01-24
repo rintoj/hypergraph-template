@@ -2,9 +2,9 @@ import { AuthStrategy, AuthStrategyType } from '../auth.config';
 
 export class SupabaseAuthConfig {
   public type: AuthStrategyType.Supabase;
-  public supabaseUrl;
-  public supabaseAnonKey;
-  public enableRestAPI?: boolean;
+  public supabaseUrl: string;
+  public supabaseAnonKey: string;
+  public redirectUrl: string;
 }
 
 export function createSupabaseAuthStrategy(

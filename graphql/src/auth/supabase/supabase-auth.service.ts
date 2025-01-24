@@ -29,13 +29,14 @@ export class SupabaseAuthService {
     return user;
   }
 
-  async signinWithGoogle(host: string) {
+  async signinWithGoogle(host: string, next: string | undefined) {
     const response = await this.supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${host}/auth/supabase/callback`,
         queryParams: {
           prompt: 'consent',
+          next,
         },
       },
     });

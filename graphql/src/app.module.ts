@@ -39,6 +39,7 @@ import { UserService } from './user/user.service';
         createSupabaseAuthStrategy({
           supabaseUrl: config.SUPABASE_URL,
           supabaseAnonKey: config.SUPABASE_ANON_KEY,
+          redirectUrl: config.AUTH_REDIRECT_URL,
         }),
       ],
       jwtConfig: {
