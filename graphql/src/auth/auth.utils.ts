@@ -1,3 +1,10 @@
+export function calculateExpiresAt(expiry: string) {
+  const expiresInSeconds = expirationToSeconds(expiry);
+  const now = Math.floor(Date.now() / 1000); // Get current Unix timestamp in seconds
+  const expiresAt = now + expiresInSeconds;
+  return expiresAt * 1000;
+}
+
 export function expirationToSeconds(expiry: string) {
   let seconds = 0;
   const timeRegex = /^(\d+)([d|h|m|s])$/;

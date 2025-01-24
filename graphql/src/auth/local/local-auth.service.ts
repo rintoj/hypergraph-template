@@ -29,14 +29,14 @@ export class LocalAuthService {
     password: string,
     response: Response,
   ): Promise<SigninResponse> {
-    const existingUser = await this.verifyWithUsername(username, password);
-    if (!existingUser) {
+    const authMetadata = await this.verifyWithUsername(username, password);
+    if (!authMetadata) {
       throw new UnauthorizedException(
         'Invalid username or password. Please verify your credentials and try again.',
       );
     }
     const { accessToken, authInfo } = await this.authService.issueTokens(
-      username,
+      authMetadata.id,
       response,
     );
     return { accessToken, userId: authInfo.userId };

@@ -18,6 +18,12 @@ export class AuthMetadata {
   passwordHash?: string;
 
   @Column({ nullable: true })
+  authCode?: string;
+
+  @Column({ nullable: true })
+  authCodeExpiresAt?: Date;
+
+  @Column({ nullable: true })
   lastSigninAt?: Date;
 
   @Column({ nullable: true })

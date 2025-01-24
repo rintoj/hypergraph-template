@@ -1,15 +1,16 @@
+import { StorageModule } from '@hgraph/storage/nestjs';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { toNonNullArray } from 'tsds-tools';
 import { AuthConfig, AuthStrategyType } from './auth.config';
 import { GlobalAuthGuard } from './auth.guard';
+import { AuthMetadata } from './auth.model';
+import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { AuthStrategy } from './auth.strategy';
 import { LocalAuthModule } from './local';
 import { SupabaseAuthModule } from './supabase';
-import { StorageModule } from '@hgraph/storage/nestjs';
-import { AuthMetadata } from './auth.model';
 
 @Global()
 @Module({})
@@ -29,6 +30,7 @@ export class AuthModule {
         AuthStrategy,
         AuthService,
         GlobalAuthGuard,
+        authModules.length ? AuthResolver : undefined,
         { provide: AuthConfig, useValue: config },
         { provide: 'UserService', useClass: config.userService },
       ]),

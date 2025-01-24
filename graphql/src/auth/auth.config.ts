@@ -32,4 +32,5 @@ export class AuthConfig {
   userService!: ClassType<UserServiceSpec>;
   cookieConfig?: Omit<CookieOptions, 'encode'>;
   hashSaltRounds?: number;
+  authCodeExpiry?: string;
 }

@@ -1,4 +1,13 @@
-import { BadRequestException, Controller, Get, Req, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { Public } from '../auth.guard';
 import { SupabaseAuthConfig } from './supabase-auth.config';
@@ -22,23 +31,40 @@ export class SupabaseAuthController {
   @Get('/google')
   async signinWithGoogle(@Req() request: Request, @Res() res: Response) {
     const host = `${request.protocol}://${request.get('host')}`;
-    const { next } = request.query as any;
+    const { next } = request?.query as any;
     this.validateNextUrl(next);
     const response = await this.supabaseService.signinWithGoogle(host, next);
-    res.redirect(response.data.url);
+    if (!response?.data?.url) {
+      throw new InternalServerErrorException('Invalid redirect URL');
+    }
+    res.redirect(response?.data?.url);
   }
 
   @Public()
   @Get('/callback')
-  async handleCallback(@Req() request: Request, @Res() response: Response) {
+  async handleCallback(@Req() request: Request, @Res() res: Response) {
     const { code, next } = request.query as any;
     this.validateNextUrl(next);
-    const output = await this.supabaseService.exchangeCodeForSession(
-      code,
+    const output = await this.supabaseService.exchangeCodeForSession(code);
+    res.redirect(
+      `${next ?? this.config.redirectUrl}?code=${output.code}&provider=${output.provider}`,
+    );
+  }
+
+  @Public()
+  @Post('/signin')
+  async signin(
+    @Res() response: Response,
+    @Body() input: { code: string; provider: string },
+  ) {
+    if (!input?.code || !input?.provider) {
+      throw new BadRequestException('Username and password are required');
+    }
+    const user = await this.supabaseService.signinWithCode(
+      input.code,
+      input.provider,
       response,
     );
-    response.redirect(
-      `${next ?? this.config.redirectUrl}?access_token=${output.accessToken}&user_id=${output.userId}`,
-    );
+    return response.status(200).json(user);
   }
 }

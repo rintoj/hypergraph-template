@@ -20,8 +20,8 @@ export class UserService implements UserServiceSpec {
     };
   }
 
-  protected generateId(username: string) {
-    return generateIdOf('email:' + username.toLocaleLowerCase().trim());
+  protected generateId(identifier: string) {
+    return generateIdOf('email:' + identifier?.toLocaleLowerCase().trim());
   }
 
   async findById(id: string): Promise<AuthInfo> {

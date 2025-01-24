@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { AuthModule } from '../auth.module';
 import { SupabaseAuthConfig } from './supabase-auth.config';
 import { SupabaseAuthController } from './supabase-auth.controller';
+import { SupabaseAuthResolver } from './supabase-auth.resolver';
 import { SupabaseAuthService } from './supabase-auth.service';
 
 @Module({})
@@ -13,6 +14,7 @@ export class SupabaseAuthModule {
       providers: [
         SupabaseAuthConfig,
         SupabaseAuthService,
+        SupabaseAuthResolver,
         { provide: SupabaseAuthConfig, useValue: config },
       ],
       controllers: [SupabaseAuthController],

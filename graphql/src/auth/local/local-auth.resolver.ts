@@ -30,11 +30,4 @@ export class LocalAuthResolver {
   ) {
     return this.localAuthService.signupWithUsername(username, password);
   }
-
-  @Public()
-  @Mutation(() => Boolean)
-  async signout(@Context() context: RequestContext) {
-    await this.localAuthService.signout(context.res);
-    return true;
-  }
 }

@@ -1,6 +1,11 @@
-import { generateIdOf } from '@hgraph/storage';
+import { generateIdOf, generateNumericId } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
@@ -12,7 +17,7 @@ import {
   Credentials,
   UserMetadata,
 } from './auth.model';
-import { expirationToSeconds } from './auth.utils';
+import { calculateExpiresAt, expirationToSeconds } from './auth.utils';
 
 const DEFAULT_HASH_SALT_ROUNDS = 10;
 
@@ -57,6 +62,13 @@ export class AuthService {
     });
   }
 
+  private generateAuthMetadataId({
+    provider,
+    identifier,
+  }: Pick<AuthMetadata, 'provider' | 'identifier'>) {
+    return generateIdOf(`${provider}:${identifier}`);
+  }
+
   findByIdentifier(identifier: string): Promise<AuthInfo | undefined> {
     return this.userService.findByIdentifier(identifier);
   }
@@ -72,6 +84,18 @@ export class AuthService {
     );
   }
 
+  async findByAuthCode(
+    authCode: string,
+    provider: string,
+  ): Promise<AuthMetadata | undefined> {
+    return await this.authMetadataRepository.findOne((q) =>
+      q
+        .whereEqualTo('authCode', authCode)
+        .whereEqualTo('provider', provider)
+        .whereMoreThanOrEqual('authCodeExpiresAt', new Date()),
+    );
+  }
+
   async createUser(
     input: UserMetadata,
     credentials?: Credentials,
@@ -81,7 +105,7 @@ export class AuthService {
       user = await this.userService.createUser(input);
     }
     await this.authMetadataRepository.save({
-      id: generateIdOf(`${input.provider}:${input.identifier}`),
+      id: this.generateAuthMetadataId(input),
       userId: user.userId,
       provider: input.provider,
       identifier: input.identifier,
@@ -97,10 +121,8 @@ export class AuthService {
     return user;
   }
 
-  async issueTokens(identifier: string, response: Response) {
-    const authMeta = await this.authMetadataRepository.findOne((q) =>
-      q.whereEqualTo('identifier', identifier),
-    );
+  async issueTokens(authMetadataId: string, response: Response) {
+    const authMeta = await this.authMetadataRepository.findById(authMetadataId);
     if (!authMeta) {
       throw new UnauthorizedException('Authentication failed: User not found');
     }
@@ -117,6 +139,32 @@ export class AuthService {
     });
     this.attachTokensToResponse(response, accessToken);
     return { accessToken, authInfo };
+  }
+
+  async issueAuthCode(identifier: string, provider: string) {
+    const authMetadata = await this.findByProvider(identifier, provider);
+    if (!authMetadata) {
+      throw new NotFoundException(
+        'Authentication failed: Auth metadata not found',
+      );
+    }
+    const code = generateNumericId();
+    await this.authMetadataRepository.update({
+      id: authMetadata.id,
+      authCode: code,
+      authCodeExpiresAt: new Date(
+        calculateExpiresAt(this.authConfig.authCodeExpiry ?? '5m'),
+      ),
+    });
+    return code;
+  }
+
+  async clearAuthCode(id: string) {
+    await this.authMetadataRepository.update({
+      id,
+      authCode: null,
+      authCodeExpiresAt: null,
+    });
   }
 
   async signout(response: Response) {
