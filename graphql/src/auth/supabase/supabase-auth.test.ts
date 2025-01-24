@@ -203,6 +203,89 @@ describe('Local Auth with Rest', () => {
       });
   });
 
+  test('should access protected route with valid authentication', async () => {
+    const code = 'code';
+    const { authCode, provider } = await request(app.getHttpServer())
+      .get(`/auth/supabase/callback?code=${code}`)
+      .expect(302)
+      .then((res) => {
+        expect(res.headers.location).toMatch(config.redirectUrl);
+        const url = new URL(res.headers.location);
+        const authCode = url.searchParams.get('code');
+        const provider = url.searchParams.get('provider');
+        return { authCode, provider };
+      });
+    const { accessToken } = await request(app.getHttpServer())
+      .post('/auth/supabase/token')
+      .send({ code: authCode, provider })
+      .expect(200)
+      .then((res) => res.body);
+    await request(app.getHttpServer())
+      .get('/protected')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          public: false,
+        });
+      });
+  });
+
+  test('should access protected route with valid "token" in the header', async () => {
+    const code = 'code';
+    const { authCode, provider } = await request(app.getHttpServer())
+      .get(`/auth/supabase/callback?code=${code}`)
+      .expect(302)
+      .then((res) => {
+        expect(res.headers.location).toMatch(config.redirectUrl);
+        const url = new URL(res.headers.location);
+        const authCode = url.searchParams.get('code');
+        const provider = url.searchParams.get('provider');
+        return { authCode, provider };
+      });
+    const { accessToken } = await request(app.getHttpServer())
+      .post('/auth/supabase/token')
+      .send({ code: authCode, provider })
+      .expect(200)
+      .then((res) => res.body);
+    await request(app.getHttpServer())
+      .get('/protected')
+      .set('token', accessToken)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          public: false,
+        });
+      });
+  });
+
+  test('should access protected route with valid "token" in the query parameter', async () => {
+    const code = 'code';
+    const { authCode, provider } = await request(app.getHttpServer())
+      .get(`/auth/supabase/callback?code=${code}`)
+      .expect(302)
+      .then((res) => {
+        expect(res.headers.location).toMatch(config.redirectUrl);
+        const url = new URL(res.headers.location);
+        const authCode = url.searchParams.get('code');
+        const provider = url.searchParams.get('provider');
+        return { authCode, provider };
+      });
+    const { accessToken } = await request(app.getHttpServer())
+      .post('/auth/supabase/token')
+      .send({ code: authCode, provider })
+      .expect(200)
+      .then((res) => res.body);
+    await request(app.getHttpServer())
+      .get(`/protected?token=${accessToken}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          public: false,
+        });
+      });
+  });
+
   test('should return error for invalid code during session exchange', async () => {
     await request(app.getHttpServer())
       .post('/auth/supabase/token')
