@@ -3,11 +3,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
-import { AuthModule } from './auth';
-import { createLocalStrategy } from './auth/local';
 import { config } from './config';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
+import { AuthModule } from '@hgraph/auth';
+import { createLocalStrategy } from '@hgraph/auth/local';
+// import { createSupabaseAuthStrategy } from '@hgraph/auth/supabase';
 
 @Module({
   imports: [
@@ -32,10 +33,18 @@ import { UserService } from './user/user.service';
     // }),
     UserModule,
     AuthModule.forRoot({
+      userService: UserService,
       strategies: [
         createLocalStrategy({
-          userService: UserService,
+          enableGraphQLAPI: true,
+          enableRestAPI: true,
         }),
+        // createSupabaseAuthStrategy({
+        //   supabaseUrl: config.SUPABASE_URL,
+        //   supabaseAnonKey: config.SUPABASE_ANON_KEY,
+        //   redirectUrl: config.AUTH_REDIRECT_URL,
+        //   providers: ['google', 'github', 'facebook'],
+        // }),
       ],
       jwtConfig: {
         secret: config.JWT_SECRET,
