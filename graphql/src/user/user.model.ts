@@ -1,6 +1,5 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import { AuthMetadata } from '../auth/auth.model';
 
 export enum UserRole {
   Admin = 'Admin',
@@ -16,7 +15,7 @@ registerEnumType(UserStatus, { name: 'UserStatus' });
 
 @ObjectType()
 @Entity()
-export class User extends AuthMetadata {
+export class User {
   @Field(() => ID)
   @PrimaryColumn()
   id!: string;
@@ -25,9 +24,17 @@ export class User extends AuthMetadata {
   @Column({ nullable: true })
   name!: string;
 
-  @Field({ nullable: true })
-  @Column()
+  @Field()
+  @Column({ unique: true })
   email!: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  phoneNumber?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  pictureUrl?: string;
 
   @Field(() => [UserRole])
   @Column({
@@ -39,17 +46,8 @@ export class User extends AuthMetadata {
   })
   roles?: UserRole[];
 
-  @Field(() => Date, { nullable: true })
   @Column({ nullable: true })
-  createdAt?: Date;
-
-  @Field(() => Date, { nullable: true })
-  @Column({ nullable: true })
-  updatedAt?: Date;
-
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true })
-  photoURL?: string;
+  isEmailVerified?: boolean;
 
   @Column({
     type: 'enum',
@@ -58,6 +56,11 @@ export class User extends AuthMetadata {
   })
   status!: UserStatus;
 
+  @Field(() => Date, { nullable: true })
   @Column({ nullable: true })
-  isEmailVerified?: boolean;
+  createdAt?: Date;
+
+  @Field(() => Date, { nullable: true })
+  @Column({ nullable: true })
+  updatedAt?: Date;
 }

@@ -1,92 +1,74 @@
 import { generateIdOf } from '@hgraph/storage';
 import {
   BadRequestException,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
+import { SigninResponse, SignupResponse } from '../auth.response';
 import { AuthService } from '../auth.service';
-import { LocalAuthConfig, LocalStrategyService } from './local-auth.config';
-import { SignInResponse, SignUpResponse } from './local-auth.response';
-
-const DEFAULT_HASH_SALT_ROUNDS = 10;
 
 @Injectable()
 export class LocalAuthService {
-  constructor(
-    @Inject('LocalStrategyService')
-    private readonly localStrategyService: LocalStrategyService,
-    private readonly authService: AuthService,
-    private readonly config: LocalAuthConfig,
-  ) {}
-
-  private async generateHash(password: string): Promise<string> {
-    const salt = await bcrypt.genSalt(
-      this.config.hashSaltRounds || DEFAULT_HASH_SALT_ROUNDS,
-    );
-    return await bcrypt.hash(password, salt);
-  }
+  private readonly provider = 'local';
+  constructor(private readonly authService: AuthService) {}
 
   private async comparePassword(password: string, hash: string) {
     return await bcrypt.compare(password, hash);
   }
   async verifyWithUsername(username: string, password: string) {
-    const user = await this.localStrategyService.findByUsername(username);
+    const user = await this.authService.findByProvider(username, this.provider);
     if (!user?.passwordHash) return;
     if (!(await this.comparePassword(password, user.passwordHash))) return;
     return user;
   }
 
-  async signInWithUsername(
+  async signinWithUsername(
     username: string,
     password: string,
     response: Response,
-  ): Promise<SignInResponse> {
+  ): Promise<SigninResponse> {
     const existingUser = await this.verifyWithUsername(username, password);
     if (!existingUser) {
       throw new UnauthorizedException(
         'Invalid username or password. Please verify your credentials and try again.',
       );
     }
-    const { accessToken, refreshToken } = this.authService.signInWithUser(
-      existingUser,
+    const { accessToken, authInfo } = await this.authService.issueTokens(
+      username,
       response,
     );
-    const user = await this.localStrategyService.signInWithUsername({
-      username,
-      refreshTokenHash: await this.generateHash(refreshToken),
-    });
-    return { accessToken, userId: user.userId };
+    return { accessToken, userId: authInfo.userId };
   }
 
-  async signUpWithUsername(
+  async signupWithUsername(
     username: string,
     password: string,
-  ): Promise<SignUpResponse> {
-    const existingUser =
-      await this.localStrategyService.findByUsername(username);
+  ): Promise<SignupResponse> {
+    const existingUser = await this.authService.findByProvider(
+      username,
+      'local',
+    );
     if (existingUser) {
       throw new BadRequestException(
         `The username '${username}' is already in use. Please verify your username or choose a different one.`,
       );
     }
     const id = generateIdOf(username);
-    const passwordHash = await this.generateHash(password);
-    const user = await this.localStrategyService.signUpWithUsername({
-      username,
-      passwordHash,
-      authProviderType: 'username',
-      authProviderId: id,
-    });
+    const user = await this.authService.createUser(
+      {
+        name: username,
+        identifier: username,
+        providerId: id,
+        provider: this.provider,
+      },
+      { password },
+    );
     return { userId: user.userId };
   }
 
-  async signOut(response: Response, userId: string) {
-    if (userId) {
-      await this.localStrategyService.signOut(userId);
-    }
-    return await this.authService.signOut(response);
+  async signout(response: Response) {
+    return await this.authService.signout(response);
   }
 }

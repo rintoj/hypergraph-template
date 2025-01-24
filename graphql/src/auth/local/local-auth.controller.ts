@@ -6,9 +6,7 @@ import {
   Res,
 } from '@nestjs/common';
 import type { Response } from 'express';
-import { Auth } from '../auth.decorator';
 import { Public } from '../auth.guard';
-import { AuthInfo } from '../auth.model';
 import { LoginWithUsernameInput } from './local-auth.input';
 import { LocalAuthService } from './local-auth.service';
 
@@ -25,7 +23,7 @@ export class LocalAuthController {
     if (!input?.username || !input?.password) {
       throw new BadRequestException('Username and password are required');
     }
-    const user = await this.localAuthService.signInWithUsername(
+    const user = await this.localAuthService.signinWithUsername(
       input?.username,
       input?.password,
       response,
@@ -39,15 +37,15 @@ export class LocalAuthController {
     if (!input?.username || !input?.password) {
       throw new BadRequestException('Username and password are required');
     }
-    return this.localAuthService.signUpWithUsername(
+    return this.localAuthService.signupWithUsername(
       input.username,
       input.password,
     );
   }
 
   @Post('/signout')
-  async signout(@Res() response: Response, @Auth() auth?: AuthInfo) {
-    await this.localAuthService.signOut(response, auth?.userId);
+  async signout(@Res() response: Response) {
+    await this.localAuthService.signout(response);
     return response.json({ user: null });
   }
 }

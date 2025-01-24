@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth';
 import { createLocalStrategy } from './auth/local';
+import { createSupabaseAuthStrategy } from './auth/supabase';
 import { config } from './config';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
@@ -32,9 +33,12 @@ import { UserService } from './user/user.service';
     // }),
     UserModule,
     AuthModule.forRoot({
+      userService: UserService,
       strategies: [
-        createLocalStrategy({
-          userService: UserService,
+        createLocalStrategy({}),
+        createSupabaseAuthStrategy({
+          supabaseUrl: config.SUPABASE_URL,
+          supabaseAnonKey: config.SUPABASE_ANON_KEY,
         }),
       ],
       jwtConfig: {

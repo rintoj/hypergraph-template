@@ -1,29 +1,52 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class AuthMetadata {
-  @Column()
-  authProviderId!: string;
+  @PrimaryColumn()
+  id!: string;
 
   @Column()
-  authProviderType!: string;
+  identifier!: string;
 
   @Column()
-  passwordHash: string;
+  provider!: string;
+
+  @Column()
+  userId!: string;
+
+  @Column({ nullable: true })
+  passwordHash?: string;
 
   @Column({ nullable: true })
   lastSigninAt?: Date;
 
   @Column({ nullable: true })
   refreshTokenHash?: string;
+
+  @Column()
+  createdAt!: Date;
+
+  @Column({ nullable: true })
+  updatedAt?: Date;
 }
 
 export interface AuthInfo {
   userId: string;
-  username: string;
+  identifier: string;
   roles: string[];
-  authProviderId: string;
-  authProviderType: string;
 }
 
-export type AuthPayload = Omit<AuthInfo, 'authProviderId' | 'authProviderType'>;
+export interface UserMetadata {
+  identifier: string;
+  provider: string;
+  providerId: string;
+  name?: string;
+  email?: string;
+  phoneNumber?: string;
+  pictureUrl?: string;
+}
+
+export interface Credentials {
+  password?: string;
+  refreshToken?: string;
+}

@@ -39,11 +39,8 @@ describe('Auth with Rest', () => {
         }),
         UserModule,
         AuthModule.forRoot({
-          strategies: [
-            createLocalStrategy({
-              userService: UserService,
-            }),
-          ],
+          userService: UserService,
+          strategies: [createLocalStrategy({})],
           jwtConfig: {
             secret: 'secret1',
             expiry: '1h',

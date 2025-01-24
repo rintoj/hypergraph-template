@@ -6,15 +6,23 @@ import { AuthConfig, AuthStrategyType } from './auth.config';
 import { GlobalAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { AuthStrategy } from './auth.strategy';
-import { LocalAuthModule } from './local/local-auth.module';
+import { LocalAuthModule } from './local';
+import { SupabaseAuthModule } from './supabase';
+import { StorageModule } from '@hgraph/storage/nestjs';
+import { AuthMetadata } from './auth.model';
 
 @Global()
 @Module({})
 export class AuthModule {
-  static forRoot(config: AuthConfig): DynamicModule {
-    const localStrategy = config.strategies.find(
-      (s) => s.type === AuthStrategyType.Local,
-    );
+  static async forRoot(config: AuthConfig): Promise<DynamicModule> {
+    const authModules = [];
+    for (const strategy of config.strategies) {
+      if (strategy.type === AuthStrategyType.Local) {
+        authModules.push(LocalAuthModule.forRoot(strategy));
+      } else if (strategy.type === AuthStrategyType.Supabase) {
+        authModules.push(SupabaseAuthModule.forRoot(strategy));
+      }
+    }
     return {
       module: AuthModule,
       providers: toNonNullArray([
@@ -22,15 +30,17 @@ export class AuthModule {
         AuthService,
         GlobalAuthGuard,
         { provide: AuthConfig, useValue: config },
+        { provide: 'UserService', useClass: config.userService },
       ]),
       exports: [AuthService],
       imports: toNonNullArray([
+        StorageModule.forFeature([AuthMetadata]),
         PassportModule.register({ defaultStrategy: 'jwt', global: true }),
         JwtModule.register({
           secret: config.jwtConfig.secret,
           signOptions: { expiresIn: config.jwtConfig.expiry },
         }),
-        localStrategy ? LocalAuthModule.forRoot(localStrategy) : undefined,
+        ...authModules,
       ]),
     };
   }

@@ -63,11 +63,8 @@ describe('Auth with GraphQL', () => {
         }),
         UserModule,
         AuthModule.forRoot({
-          strategies: [
-            createLocalStrategy({
-              userService: UserService,
-            }),
-          ],
+          userService: UserService,
+          strategies: [createLocalStrategy({})],
           jwtConfig: {
             secret: 'secret1',
             expiry: '1h',
@@ -83,13 +80,13 @@ describe('Auth with GraphQL', () => {
     await app.init();
   });
 
-  function signUp() {
+  function signup() {
     return request(app.getHttpServer())
       .post('/graphql')
       .send({
         query: `
-          mutation signUpWithUsername($username: String!, $password: String!) {
-            signUpWithUsername(username: $username, password: $password) {
+          mutation signupWithUsername($username: String!, $password: String!) {
+            signupWithUsername(username: $username, password: $password) {
               userId
             }
           }
@@ -98,13 +95,13 @@ describe('Auth with GraphQL', () => {
       });
   }
 
-  function signIn() {
+  function signin() {
     return request(app.getHttpServer())
       .post('/graphql')
       .send({
         query: `
-          mutation signInWithUsername($username: String!, $password: String!) {
-            signInWithUsername(username: $username, password: $password) {
+          mutation signinWithUsername($username: String!, $password: String!) {
+            signinWithUsername(username: $username, password: $password) {
               accessToken
               userId
             }
@@ -145,13 +142,13 @@ describe('Auth with GraphQL', () => {
   }
 
   test('should successfully sign up a new user and return userId using graphql', async () => {
-    await signUp()
+    await signup()
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
         expect(res.body).toEqual({
           data: {
-            signUpWithUsername: {
+            signupWithUsername: {
               userId: expect.any(String),
             },
           },
@@ -160,17 +157,17 @@ describe('Auth with GraphQL', () => {
   });
 
   test('should successfully sign in an existing user and return userId', async () => {
-    const user = await signUp()
+    const user = await signup()
       .expect(200)
       .expect('Content-Type', /json/)
-      .then((res) => res.body.data.signUpWithUsername);
-    await signIn()
+      .then((res) => res.body.data.signupWithUsername);
+    await signin()
       .expect(200)
       .expect('Content-Type', /json/)
       .expect((res) => {
         expect(res.body).toEqual({
           data: {
-            signInWithUsername: {
+            signinWithUsername: {
               accessToken: expect.any(String),
               userId: user.userId,
             },
@@ -192,11 +189,11 @@ describe('Auth with GraphQL', () => {
   });
 
   test('should successfully access protected endpoint with authentication using Bearer token', async () => {
-    await signUp().expect(200).expect('Content-Type', /json/);
-    const { accessToken } = await signIn()
+    await signup().expect(200).expect('Content-Type', /json/);
+    const { accessToken } = await signin()
       .expect(200)
       .expect('Content-Type', /json/)
-      .then((res) => res.body.data.signInWithUsername);
+      .then((res) => res.body.data.signinWithUsername);
     await accessProtected()
       .set('Authorization', `Bearer ${accessToken}`)
       .expect(200)
@@ -213,11 +210,11 @@ describe('Auth with GraphQL', () => {
   });
 
   test('should successfully access protected endpoint with authentication using token', async () => {
-    await signUp().expect(200).expect('Content-Type', /json/);
-    const { accessToken } = await signIn()
+    await signup().expect(200).expect('Content-Type', /json/);
+    const { accessToken } = await signin()
       .expect(200)
       .expect('Content-Type', /json/)
-      .then((res) => res.body.data.signInWithUsername);
+      .then((res) => res.body.data.signinWithUsername);
     await accessProtected()
       .set('token', accessToken)
       .expect(200)
@@ -234,11 +231,11 @@ describe('Auth with GraphQL', () => {
   });
 
   test('should successfully access protected endpoint with authentication using token in query parameter', async () => {
-    await signUp().expect(200).expect('Content-Type', /json/);
-    const { accessToken } = await signIn()
+    await signup().expect(200).expect('Content-Type', /json/);
+    const { accessToken } = await signin()
       .expect(200)
       .expect('Content-Type', /json/)
-      .then((res) => res.body.data.signInWithUsername);
+      .then((res) => res.body.data.signinWithUsername);
     await request(app.getHttpServer())
       .post(`/graphql?token=${accessToken}`)
       .send({
@@ -283,13 +280,13 @@ describe('Auth with GraphQL', () => {
   });
 
   test('should return 400 error when invalid credentials are provided during signin', async () => {
-    await signUp().expect(200).expect('Content-Type', /json/);
+    await signup().expect(200).expect('Content-Type', /json/);
     await request(app.getHttpServer())
       .post('/graphql')
       .send({
         query: `
-          mutation signInWithUsername($username: String!, $password: String!) {
-            signInWithUsername(username: $username, password: $password) {
+          mutation signinWithUsername($username: String!, $password: String!) {
+            signinWithUsername(username: $username, password: $password) {
               accessToken
               userId
             }
