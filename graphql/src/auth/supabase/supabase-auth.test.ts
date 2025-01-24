@@ -106,7 +106,7 @@ describe('Local Auth with Rest', () => {
       .get(`/auth/supabase/google?next=${config.redirectUrl}`)
       .expect(302)
       .expect((res) => {
-        expect(res.headers.location).toContain(config.supabaseUrl);
+        expect(res.headers.location).toMatch(config.supabaseUrl);
       });
   });
 
@@ -120,7 +120,7 @@ describe('Local Auth with Rest', () => {
       .get(`/auth/supabase/callback?code=${code}`)
       .expect(302)
       .expect((res) => {
-        expect(res.headers.location).toContain(config.supabaseUrl);
+        expect(res.headers.location).toMatch(config.redirectUrl + '?code=');
       });
     expect(exchangeCodeForSession).toHaveBeenCalled();
   });
