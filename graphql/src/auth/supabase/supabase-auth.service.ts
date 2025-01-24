@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { Response } from 'express';
 import { UserMetadata } from '../auth.model';
@@ -44,7 +48,7 @@ export class SupabaseAuthService {
       );
     }
     const user = data.session.user;
-    const provider = `Supabase:${user.app_metadata.provider}`;
+    const provider = `supabase:${user.app_metadata.provider}`;
     const userMetadata: UserMetadata = {
       provider,
       providerId: user.id,
@@ -65,7 +69,7 @@ export class SupabaseAuthService {
   async signinWithCode(code: string, provider: string, response: Response) {
     const authMetadata = await this.authService.findByAuthCode(code, provider);
     if (!authMetadata) {
-      throw new UnauthorizedException(
+      throw new BadRequestException(
         'Invalid authentication code. Please try again.',
       );
     }

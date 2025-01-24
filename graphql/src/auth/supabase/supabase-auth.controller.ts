@@ -52,13 +52,15 @@ export class SupabaseAuthController {
   }
 
   @Public()
-  @Post('/signin')
-  async signin(
+  @Post('/token')
+  async signWithCode(
     @Res() response: Response,
     @Body() input: { code: string; provider: string },
   ) {
     if (!input?.code || !input?.provider) {
-      throw new BadRequestException('Username and password are required');
+      throw new BadRequestException(
+        'Provider is missing. Please provide a valid provider.',
+      );
     }
     const user = await this.supabaseService.signinWithCode(
       input.code,
