@@ -3,11 +3,11 @@ import { Controller, Get, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { App } from 'supertest/types';
-import { AuthModule } from '../auth';
-import { Public } from '../auth/auth.guard';
-import { createLocalStrategy } from '../auth/local';
-import { UserModule } from './user.module';
-import { UserService } from './user.service';
+import { AuthModule } from '..';
+import { Public } from '../auth.guard';
+import { createLocalStrategy } from '.';
+import { UserModule } from '../../user/user.module';
+import { UserService } from '../../user/user.service';
 
 const request = supertest as any as (
   app: App,
@@ -27,7 +27,7 @@ export class TestController {
   }
 }
 
-describe('Auth with Rest', () => {
+describe('Local Auth with Rest', () => {
   let module: TestingModule;
   let app: INestApplication;
 

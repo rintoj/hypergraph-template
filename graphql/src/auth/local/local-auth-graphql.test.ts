@@ -11,11 +11,11 @@ import {
 import { Test, TestingModule } from '@nestjs/testing';
 import * as supertest from 'supertest';
 import { App } from 'supertest/types';
-import { AuthModule } from '../auth';
-import { Public } from '../auth/auth.guard';
-import { UserModule } from './user.module';
-import { UserService } from './user.service';
-import { createLocalStrategy } from '../auth/local';
+import { AuthModule } from '..';
+import { Public } from '../auth.guard';
+import { UserModule } from '../../user/user.module';
+import { UserService } from '../../user/user.service';
+import { createLocalStrategy } from '.';
 
 const request = supertest as any as (
   app: App,
@@ -41,7 +41,7 @@ export class TestResolver {
   }
 }
 
-describe('Auth with GraphQL', () => {
+describe('Local Auth with GraphQL', () => {
   let module: TestingModule;
   let app: INestApplication;
 
