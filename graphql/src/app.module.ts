@@ -35,7 +35,10 @@ import { UserService } from './user/user.service';
     AuthModule.forRoot({
       userService: UserService,
       strategies: [
-        createLocalStrategy({}),
+        createLocalStrategy({
+          enableGraphQLAPI: true,
+          enableRestAPI: true,
+        }),
         createSupabaseAuthStrategy({
           supabaseUrl: config.SUPABASE_URL,
           supabaseAnonKey: config.SUPABASE_ANON_KEY,
