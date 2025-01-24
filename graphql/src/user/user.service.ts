@@ -1,8 +1,8 @@
 import { generateIdOf } from '@hgraph/storage';
 import { InjectRepo, Repository } from '@hgraph/storage/nestjs';
 import { Injectable } from '@nestjs/common';
-import { UserServiceSpec } from '../auth/auth.config';
-import { AuthInfo, UserMetadata } from '../auth/auth.model';
+import { UserServiceSpec } from '@hgraph/auth';
+import { AuthInfo, UserMetadata } from '@hgraph/auth';
 import { User, UserStatus } from './user.model';
 
 @Injectable()
