@@ -15,8 +15,8 @@ importers:
         specifier: ^7.15.0
         version: 7.15.0
       '@hgraph/auth':
-        specifier: file:/Users/rintoj/projects/hypergraph-packages/hypergraph-auth/hgraph-auth-1.0.0.tgz
-        version: file:../../hypergraph-packages/hypergraph-auth/hgraph-auth-1.0.0.tgz(@google-cloud/storage@7.15.0)(class-validator@0.14.1)(firebase-admin@11.10.1)(graphql@16.10.0)(passport@0.7.0)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
+        specifier: ^1.1.0
+        version: 1.1.0(@google-cloud/storage@7.15.0)(class-validator@0.14.1)(firebase-admin@11.10.1)(graphql@16.10.0)(passport@0.7.0)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
       '@hgraph/storage':
         specifier: 1.3.1
         version: 1.3.1(@google-cloud/storage@7.15.0)(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(firebase-admin@11.10.1)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
@@ -584,9 +584,8 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@hgraph/auth@file:../../hypergraph-packages/hypergraph-auth/hgraph-auth-1.0.0.tgz':
-    resolution: {integrity: sha512-gfnyTvG8uYrWXuxj5SO8ZvEXhkI7pEeTb+Yy91kzW+qOisGCVwjLtZGXFetfKBz+3Y+voUrSQqpePXrAcIt2OQ==, tarball: file:../../hypergraph-packages/hypergraph-auth/hgraph-auth-1.0.0.tgz}
-    version: 1.0.0
+  '@hgraph/auth@1.1.0':
+    resolution: {integrity: sha512-uJF7D5v8gVl2DhWy6gnn7TA7fkwabC2elbJ3ym3J8qzGqNn3yTRI8ci16hMhQroa7jZSmX2l3VQeGssO3MTYiw==}
 
   '@hgraph/storage@1.3.1':
     resolution: {integrity: sha512-YuAlTZBJij1kxCPnHLKTgIfL0xTw8BWzcpKfZrZdIZNyxtc6lpCVoutqj5nRhvkxZFRa/NhKjSx4hoUcy4d6mg==}
@@ -4881,7 +4880,7 @@ snapshots:
       yargs: 17.7.2
     optional: true
 
-  '@hgraph/auth@file:../../hypergraph-packages/hypergraph-auth/hgraph-auth-1.0.0.tgz(@google-cloud/storage@7.15.0)(class-validator@0.14.1)(firebase-admin@11.10.1)(graphql@16.10.0)(passport@0.7.0)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))':
+  '@hgraph/auth@1.1.0(@google-cloud/storage@7.15.0)(class-validator@0.14.1)(firebase-admin@11.10.1)(graphql@16.10.0)(passport@0.7.0)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))':
     dependencies:
       '@hgraph/storage': 1.3.1(@google-cloud/storage@7.15.0)(@nestjs/common@11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(firebase-admin@11.10.1)(pg@8.13.1)(ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3))
       '@nestjs/common': 11.0.3(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
