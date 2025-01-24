@@ -5,6 +5,7 @@ export class SupabaseAuthConfig {
   public supabaseUrl: string;
   public supabaseAnonKey: string;
   public redirectUrl: string;
+  public providers: string[];
 }
 
 export function createSupabaseAuthStrategy(

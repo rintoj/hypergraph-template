@@ -34,9 +34,10 @@ const config = {
   supabaseUrl: 'https://example.supabase.co',
   supabaseAnonKey: 'supabase-key',
   redirectUrl: 'http://localhost:2212',
+  providers: ['google'],
 };
 
-describe('Local Auth with Rest', () => {
+describe('Supabase Auth', () => {
   let module: TestingModule;
   let app: INestApplication;
   let service: any;
@@ -357,8 +358,7 @@ describe('Local Auth with Rest', () => {
       .expect((res) => {
         expect(res.body).toEqual({
           statusCode: 404,
-          message: 'Cannot GET /auth/supabase/nonexistent',
-          error: 'Not Found',
+          message: 'Not Found',
         });
       });
   });

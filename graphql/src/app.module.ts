@@ -40,6 +40,7 @@ import { UserService } from './user/user.service';
           supabaseUrl: config.SUPABASE_URL,
           supabaseAnonKey: config.SUPABASE_ANON_KEY,
           redirectUrl: config.AUTH_REDIRECT_URL,
+          providers: ['google', 'github', 'facebook'],
         }),
       ],
       jwtConfig: {

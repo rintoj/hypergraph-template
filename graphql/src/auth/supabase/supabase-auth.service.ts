@@ -1,9 +1,10 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, Provider, SupabaseClient } from '@supabase/supabase-js';
 import type { Response } from 'express';
 import { UserMetadata } from '../auth.model';
 import { AuthService } from '../auth.service';
@@ -22,9 +23,16 @@ export class SupabaseAuthService {
     });
   }
 
-  async signinWithGoogle(host: string, next: string | undefined) {
+  async signinWithProvider(
+    host: string,
+    provider: Provider,
+    next: string | undefined,
+  ) {
+    if (!this.config.providers.includes(provider)) {
+      throw new NotFoundException('Provider not found');
+    }
     return await this.supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider,
       options: {
         redirectTo: `${host}/auth/supabase/callback`,
         queryParams: {
