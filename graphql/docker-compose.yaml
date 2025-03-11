@@ -1,0 +1,40 @@
+services:
+  {PROJECT_NAME}-db:
+    image: postgres:latest
+    container_name: db
+    ports:
+      - '${DATABASE_PORT:-5432}:${DATABASE_PORT:-5432}'
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-password}
+      POSTGRES_DB: ${DATABASE_NAME:-nestjs_db}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - {PROJECT_NAME}
+    env_file:
+      - .env
+
+  {PROJECT_NAME}-graphql:
+    build: .
+    container_name: graphql
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    command: npm run dev
+    networks:
+      - {PROJECT_NAME}
+    env_file:
+      - .env
+
+volumes:
+  db-data:
+  node_modules:
+
+networks:
+  {PROJECT_NAME}:
+    driver: bridge
