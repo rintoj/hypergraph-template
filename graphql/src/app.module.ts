@@ -31,6 +31,12 @@ const APP_MODULES = [UserModule];
     }),
     StorageModule.forRoot({
       repositoryType: RepositoryType.TypeORM,
+      database: config.DATABASE_NAME,
+      host: config.DATABASE_HOST,
+      port: config.DATABASE_PORT,
+      username: config.DATABASE_USER,
+      password: config.DATABASE_PASSWORD,
+      synchronize: config.DATABASE_SYNCHRONIZE,
     }),
     AuthModule.forRoot({
       userService: UserService,
